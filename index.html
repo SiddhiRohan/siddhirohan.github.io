@@ -6,1584 +6,308 @@
   <title>Siddhi Rohan | Data Scientist & Data Engineer</title>
   <meta name="description" content="Siddhi Rohan builds production generative-AI systems, ETL pipelines, and AI governance middleware. MS Data Science, University of Maryland (May 2026).">
   <meta property="og:title" content="Siddhi Rohan | Data Scientist & Data Engineer">
-  <meta property="og:description" content="Building auditable, end-to-end AI systems. GenAI · Data Engineering · AI Governance.">
+  <meta property="og:description" content="Messy data in. Accountable AI systems out. GenAI · Data Engineering · AI Governance.">
   <meta property="og:type" content="website">
-  <meta name="theme-color" content="#000000">
+  <meta property="og:image" content="https://siddhirohan.github.io/assets/img/morpheus.jpg">
+  <meta name="theme-color" content="#0e0d0c">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230e0d0c'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23ff4b00'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders:opsz,wght@10..72,500;10..72,700;10..72,800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --blk: #000000;
-      --wht: #e8e8e4;
-      --dim: rgba(232,232,228,0.55);
-      --faint: rgba(232,232,228,0.30);
-      --ghost: rgba(232,232,228,0.12);
-      --line: rgba(232,232,228,0.14);
-      --sig: #ff4b00; /* signal, used sparingly */
-      --disp: 'Big Shoulders', 'Arial Narrow', sans-serif;
-      --mono: 'JetBrains Mono', 'SFMono-Regular', monospace;
-      --pad: 24px;
-      --hud: 44px;
-    }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    ::selection { background: var(--sig); color: var(--blk); }
-
-    body {
-      font-family: var(--mono);
-      background: var(--blk);
-      color: var(--wht);
-      font-size: 13px;
-      line-height: 1.6;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    a { color: inherit; text-decoration: none; }
-
-    /* ============ COLUMN GRID OVERLAY ============ */
-    .grid-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 1;
-      pointer-events: none;
-      background:
-        linear-gradient(to right, var(--ghost) 1px, transparent 1px) 0 0 / 25% 100%,
-        linear-gradient(to right, transparent calc(100% - 1px), var(--ghost) calc(100% - 1px));
-      opacity: 0.35;
-    }
-
-    /* ============ PRELOADER ============ */
-    .loader {
-      position: fixed;
-      inset: 0;
-      z-index: 10000;
-      background: var(--blk);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: var(--pad);
-      transition: transform .7s cubic-bezier(.76,0,.24,1);
-    }
-    .loader.done { transform: translateY(-100%); }
-    .loader-top {
-      display: flex;
-      justify-content: space-between;
-      text-transform: uppercase;
-      font-size: 11px;
-      letter-spacing: 0.14em;
-      color: var(--dim);
-    }
-    .loader-top .blink { animation: blink 1s steps(2) infinite; }
-    .loader-bottom {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-    }
-    .loader-count {
-      font-family: var(--disp);
-      font-weight: 800;
-      font-size: clamp(6rem, 22vw, 16rem);
-      line-height: 0.8;
-      letter-spacing: -0.01em;
-      font-variant-numeric: tabular-nums;
-    }
-    .loader-bar {
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      height: 3px;
-      width: 0%;
-      background: var(--wht);
-    }
-    @keyframes blink { 50% { opacity: 0; } }
-
-    /* ============ HUD FRAME (fixed corners) ============ */
-    .hud {
-      position: fixed;
-      inset: 0;
-      z-index: 500;
-      pointer-events: none;
-      font-size: 10px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-    }
-    .hud > div { position: fixed; pointer-events: auto; }
-    .hud-tl { top: var(--pad); left: var(--pad); display: flex; gap: 10px; align-items: baseline; }
-    .hud-tl .mark { color: var(--sig); }
-    .hud-tl strong { font-weight: 700; letter-spacing: 0.14em; }
-    .hud-tr { top: var(--pad); right: var(--pad); display: flex; gap: 22px; }
-    .hud-tr a { color: var(--dim); transition: color .2s; position: relative; }
-    .hud-tr a:hover { color: var(--wht); }
-    .hud-tr a::before { content: '['; opacity: 0; margin-right: 2px; transition: opacity .2s; color: var(--sig); }
-    .hud-tr a::after  { content: ']'; opacity: 0; margin-left: 2px;  transition: opacity .2s; color: var(--sig); }
-    .hud-tr a:hover::before, .hud-tr a:hover::after { opacity: 1; }
-    .hud-bl { bottom: var(--pad); left: var(--pad); color: var(--faint); display: flex; gap: 18px; }
-    .hud-br { bottom: var(--pad); right: var(--pad); color: var(--faint); display: flex; gap: 18px; align-items: center; }
-    .hud-br .dot {
-      width: 6px; height: 6px;
-      background: var(--sig);
-      border-radius: 50%;
-      display: inline-block;
-      margin-right: 7px;
-      animation: pulse 2.4s ease-in-out infinite;
-    }
-    @keyframes pulse { 50% { opacity: 0.2; } }
-    .hud .bar-top, .hud .bar-bottom {
-      position: fixed;
-      left: 0; right: 0;
-      height: var(--hud);
-      pointer-events: none;
-      background: linear-gradient(to bottom, var(--blk) 30%, transparent);
-    }
-    .hud .bar-top { top: 0; }
-    .hud .bar-bottom { bottom: 0; transform: scaleY(-1); }
-
-    /* ============ CROSSHAIR CURSOR ============ */
-    .xh-x, .xh-y, .xh-tag { display: none; }
-    @media (pointer: fine) {
-      .xh-x, .xh-y {
-        display: block;
-        position: fixed;
-        z-index: 400;
-        pointer-events: none;
-        background: rgba(232,232,228,0.10);
-      }
-      .xh-x { left: 0; right: 0; height: 1px; }
-      .xh-y { top: 0; bottom: 0; width: 1px; }
-      .xh-tag {
-        display: block;
-        position: fixed;
-        z-index: 400;
-        pointer-events: none;
-        font-size: 9px;
-        letter-spacing: 0.1em;
-        color: var(--faint);
-        transform: translate(14px, 14px);
-        font-variant-numeric: tabular-nums;
-      }
-    }
-
-    /* ============ HERO ============ */
-    .hero {
-      position: relative;
-      min-height: 100svh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: calc(var(--hud) + 40px) var(--pad) calc(var(--hud) + 34px);
-      overflow: hidden;
-      z-index: 2;
-      background: var(--blk);
-    }
-    #field {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-    }
-    .hero-inner { position: relative; z-index: 2; }
-
-    /* 3D totem (three.js, generated mesh drawn as x-ray wireframe) */
-    #totem {
-      position: absolute;
-      right: 1vw;
-      top: 50%;
-      width: min(54vw, 88vh);
-      height: min(54vw, 88vh);
-      transform: translateY(-50%);
-      z-index: 1;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 1.4s ease .6s;
-    }
-    #totem.on { opacity: 1; }
-    .totem-tag {
-      position: absolute;
-      right: var(--pad);
-      bottom: calc(var(--hud) + 6px);
-      z-index: 2;
-      font-size: 9px;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--faint);
-      opacity: 0;
-      transition: opacity .8s ease 1.2s;
-    }
-    .totem-tag.on { opacity: 1; }
-    .totem-tag b { color: var(--sig); font-weight: 400; }
-
-    /* project object preview, follows cursor over work rows */
-    .peek {
-      position: fixed;
-      left: 0; top: 0;
-      width: 280px;
-      height: 280px;
-      z-index: 450;
-      pointer-events: none;
-      background: var(--blk);
-      border: 1px solid rgba(232,232,228,0.35);
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity .18s ease, visibility .18s;
-      will-change: transform;
-    }
-    .peek.on { opacity: 1; visibility: visible; }
-    .peek canvas { width: 100%; height: 100%; display: block; }
-    .peek-bar {
-      position: absolute;
-      left: 10px; right: 10px;
-      display: flex;
-      justify-content: space-between;
-      font-size: 9px;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--dim);
-    }
-    .peek-bar.t { top: 8px; }
-    .peek-bar.b { bottom: 8px; color: var(--faint); }
-    .peek-bar .sig { color: var(--sig); }
-    .peek::before, .peek::after {
-      content: '';
-      position: absolute;
-      width: 9px; height: 9px;
-      border: 1px solid var(--sig);
-    }
-    .peek::before { left: -1px; top: -1px; border-right: 0; border-bottom: 0; }
-    .peek::after { right: -1px; bottom: -1px; border-left: 0; border-top: 0; }
-    @media not (pointer: fine) { .peek { display: none; } }
-
-    .hero-pre {
-      display: flex;
-      justify-content: space-between;
-      text-transform: uppercase;
-      font-size: 10px;
-      letter-spacing: 0.18em;
-      color: var(--dim);
-      border-top: 1px solid var(--line);
-      padding-top: 12px;
-      margin-bottom: 4vh;
-    }
-    .hero-pre .sig { color: var(--sig); }
-
-    .hero-name {
-      font-family: var(--disp);
-      font-weight: 800;
-      text-transform: uppercase;
-      line-height: 0.82;
-      letter-spacing: 0.005em;
-      font-size: clamp(4.2rem, 17.5vw, 15.5rem);
-      user-select: none;
-    }
-    .hero-name .row { display: block; overflow: hidden; }
-    .hero-name .row > span {
-      display: block;
-      transform: translateY(110%);
-      transition: transform 1s cubic-bezier(.76,0,.24,1);
-    }
-    body.ready .hero-name .row:nth-child(1) > span { transform: translateY(0); transition-delay: .05s; }
-    body.ready .hero-name .row:nth-child(2) > span { transform: translateY(0); transition-delay: .15s; }
-    body.ready .hero-name .row:nth-child(3) > span { transform: translateY(0); transition-delay: .25s; }
-    .hero-name .r2 { text-align: right; }
-    .hero-name .r2 .idx {
-      font-family: var(--mono);
-      font-weight: 400;
-      font-size: 11px;
-      letter-spacing: 0.18em;
-      color: var(--sig);
-      vertical-align: super;
-      margin-right: 3vw;
-    }
-    .hero-name .outline {
-      color: transparent;
-      -webkit-text-stroke: 1.5px var(--wht);
-    }
-
-    .hero-sub {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 40px;
-      border-top: 1px solid var(--line);
-      margin-top: 4vh;
-      padding-top: 16px;
-      text-transform: uppercase;
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      opacity: 0;
-      transition: opacity .8s ease .6s;
-    }
-    body.ready .hero-sub { opacity: 1; }
-    .hero-sub p { max-width: 46ch; color: var(--dim); line-height: 1.9; }
-    .hero-sub p strong { color: var(--wht); font-weight: 500; }
-    .hero-sub .cta {
-      white-space: nowrap;
-      border: 1px solid var(--wht);
-      padding: 14px 28px;
-      font-weight: 700;
-      letter-spacing: 0.18em;
-      transition: background .2s, color .2s;
-    }
-    .hero-sub .cta:hover { background: var(--wht); color: var(--blk); }
-
-    /* ============ MAIN ============ */
-    .main {
-      position: relative;
-      z-index: 2;
-      background: var(--blk);
-    }
-
-    .sec {
-      padding: 18vh var(--pad) 10vh;
-      border-top: 1px solid var(--line);
-    }
-    .sec-head {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 8vh;
-      gap: 20px;
-    }
-    .sec-title {
-      font-family: var(--disp);
-      font-weight: 800;
-      text-transform: uppercase;
-      line-height: 0.85;
-      font-size: clamp(2.8rem, 9vw, 8rem);
-      letter-spacing: 0.005em;
-    }
-    .sec-title .thin { font-weight: 500; color: var(--dim); }
-    .sec-idx {
-      font-size: 11px;
-      letter-spacing: 0.18em;
-      color: var(--sig);
-      padding-top: 10px;
-      white-space: nowrap;
-    }
-    .sec-idx::before { content: '['; color: var(--faint); }
-    .sec-idx::after  { content: ']'; color: var(--faint); }
-    .plus { color: var(--faint); font-weight: 400; }
-
-    /* reveal */
-    .rv { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1); }
-    .rv.in { opacity: 1; transform: none; }
-
-    /* ============ ABOUT ============ */
-    .about-grid {
-      display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 6vw;
-      align-items: start;
-    }
-    .about-lede {
-      font-family: var(--disp);
-      font-weight: 500;
-      text-transform: uppercase;
-      font-size: clamp(1.5rem, 3.2vw, 2.6rem);
-      line-height: 1.08;
-      margin-bottom: 5vh;
-    }
-    .about-lede em { font-style: normal; color: var(--sig); }
-    .about-body p {
-      color: var(--dim);
-      max-width: 62ch;
-      margin-bottom: 20px;
-      text-transform: uppercase;
-      font-size: 11px;
-      letter-spacing: 0.06em;
-      line-height: 2;
-    }
-    .about-body strong { color: var(--wht); font-weight: 500; }
-
-    .datarow {
-      display: flex;
-      align-items: baseline;
-      gap: 12px;
-      padding: 16px 0;
-      border-bottom: 1px dashed var(--ghost);
-      text-transform: uppercase;
-      font-size: 11px;
-      letter-spacing: 0.1em;
-    }
-    .datarow:first-child { border-top: 1px dashed var(--ghost); }
-    .datarow .k { color: var(--faint); white-space: nowrap; }
-    .datarow .leader { flex: 1; border-bottom: 1px dotted var(--ghost); transform: translateY(-3px); }
-    .datarow .v {
-      font-family: var(--disp);
-      font-weight: 800;
-      font-size: 1.9rem;
-      line-height: 1;
-      white-space: nowrap;
-    }
-
-    .stack {
-      margin-top: 7vh;
-      border-top: 1px solid var(--line);
-      padding-top: 20px;
-    }
-    .stack-label {
-      font-size: 10px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--faint);
-      margin-bottom: 18px;
-    }
-    .stack-list {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px 24px;
-      text-transform: uppercase;
-      font-size: 11px;
-      letter-spacing: 0.12em;
-      color: var(--dim);
-    }
-    .stack-list span::before { content: '/ '; color: var(--faint); }
-    .stack-list span { transition: color .2s; }
-    .stack-list span:hover { color: var(--wht); }
-
-    /* ============ WORK ============ */
-    .work-list { border-top: 1px solid var(--line); }
-    .work-row {
-      display: grid;
-      grid-template-columns: 90px 1fr auto;
-      align-items: center;
-      gap: 24px;
-      padding: 30px var(--pad);
-      margin: 0 calc(-1 * var(--pad));
-      border-bottom: 1px solid var(--line);
-      position: relative;
-      transition: background .18s ease, color .18s ease;
-    }
-    .work-row .no {
-      font-size: 11px;
-      letter-spacing: 0.16em;
-      color: var(--faint);
-      font-variant-numeric: tabular-nums;
-    }
-    .work-row h3 {
-      font-family: var(--disp);
-      font-weight: 800;
-      text-transform: uppercase;
-      font-size: clamp(2rem, 6vw, 4.6rem);
-      line-height: 0.9;
-      transition: transform .3s cubic-bezier(.2,.7,.2,1);
-    }
-    .work-meta {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 6px;
-      text-transform: uppercase;
-      font-size: 10px;
-      letter-spacing: 0.14em;
-      color: var(--faint);
-      text-align: right;
-    }
-    .work-meta .arrow { font-size: 18px; line-height: 1; }
-    .work-desc {
-      grid-column: 2 / 4;
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height .4s cubic-bezier(.2,.7,.2,1), padding .3s ease;
-      text-transform: uppercase;
-      font-size: 10px;
-      letter-spacing: 0.08em;
-      line-height: 1.9;
-      max-width: 72ch;
-    }
-    .work-row:hover { background: var(--wht); color: var(--blk); }
-    .work-row:hover .no, .work-row:hover .work-meta { color: rgba(0,0,0,0.55); }
-    .work-row:hover h3 { transform: translateX(12px); }
-    .work-row:hover .work-desc { max-height: 140px; padding-top: 14px; }
-    .work-row:hover .work-desc { color: rgba(0,0,0,0.75); }
-
-    /* ============ EXPERIENCE ============ */
-    .exp-list { border-top: 1px solid var(--line); }
-    .exp-row {
-      display: grid;
-      grid-template-columns: 160px 1fr 1fr;
-      gap: 32px;
-      padding: 34px 0;
-      border-bottom: 1px solid var(--line);
-      align-items: start;
-    }
-    .exp-row .when {
-      font-size: 11px;
-      letter-spacing: 0.14em;
-      color: var(--sig);
-      text-transform: uppercase;
-      font-variant-numeric: tabular-nums;
-      padding-top: 5px;
-    }
-    .exp-row h3 {
-      font-family: var(--disp);
-      font-weight: 700;
-      text-transform: uppercase;
-      font-size: clamp(1.3rem, 2.6vw, 2rem);
-      line-height: 0.95;
-      margin-bottom: 8px;
-    }
-    .exp-row .org {
-      text-transform: uppercase;
-      font-size: 10px;
-      letter-spacing: 0.14em;
-      color: var(--faint);
-    }
-    .exp-row .what {
-      text-transform: uppercase;
-      font-size: 10px;
-      letter-spacing: 0.08em;
-      line-height: 2;
-      color: var(--dim);
-      max-width: 58ch;
-    }
-
-    /* ============ EDU / RESEARCH ============ */
-    .edu-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1px;
-      background: var(--line);
-      border: 1px solid var(--line);
-      margin-bottom: 8vh;
-    }
-    .edu-cell {
-      background: var(--blk);
-      padding: 40px 32px;
-      transition: background .2s, color .2s;
-    }
-    .edu-cell:hover { background: var(--wht); color: var(--blk); }
-    .edu-cell:hover .sub { color: rgba(0,0,0,0.6); }
-    .edu-cell h3 {
-      font-family: var(--disp);
-      font-weight: 800;
-      text-transform: uppercase;
-      font-size: clamp(1.4rem, 2.8vw, 2.2rem);
-      line-height: 0.95;
-      margin-bottom: 14px;
-    }
-    .edu-cell .sub {
-      text-transform: uppercase;
-      font-size: 10px;
-      letter-spacing: 0.14em;
-      color: var(--faint);
-      line-height: 2.1;
-    }
-
-    .pub-row {
-      border: 1px solid var(--line);
-      padding: 36px 32px;
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-      gap: 32px;
-      align-items: center;
-      transition: background .2s, color .2s;
-    }
-    .pub-row:hover { background: var(--wht); color: var(--blk); }
-    .pub-row:hover .tag, .pub-row:hover .where { color: rgba(0,0,0,0.6); }
-    .pub-row .tag {
-      writing-mode: vertical-rl;
-      transform: rotate(180deg);
-      font-size: 9px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--sig);
-    }
-    .pub-row h3 {
-      font-family: var(--disp);
-      font-weight: 700;
-      text-transform: uppercase;
-      font-size: clamp(1.3rem, 2.8vw, 2.1rem);
-      line-height: 1;
-      margin-bottom: 10px;
-    }
-    .pub-row .where {
-      text-transform: uppercase;
-      font-size: 10px;
-      letter-spacing: 0.12em;
-      color: var(--faint);
-    }
-    .pub-row .arrow { font-size: 20px; }
-
-    /* ============ FOOTER (fixed reveal) ============ */
-    .footer {
-      position: fixed;
-      left: 0; right: 0; bottom: 0;
-      z-index: 1;
-      background: var(--blk);
-      padding: 12vh var(--pad) calc(var(--hud) + 12px);
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      min-height: 82svh;
-    }
-    .footer-idx {
-      font-size: 11px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--sig);
-      margin-bottom: 3vh;
-    }
-    .footer-idx::before { content: '['; color: var(--faint); }
-    .footer-idx::after  { content: ']'; color: var(--faint); }
-    .footer h2 {
-      font-family: var(--disp);
-      font-weight: 800;
-      text-transform: uppercase;
-      line-height: 0.82;
-      font-size: clamp(3.4rem, 15.5vw, 14rem);
-      margin-bottom: 5vh;
-    }
-    .footer h2 a { display: inline-block; transition: color .2s; }
-    .footer h2 a:hover { color: transparent; -webkit-text-stroke: 1.5px var(--wht); }
-    .footer-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      gap: 24px;
-      flex-wrap: wrap;
-      border-top: 1px solid var(--line);
-      padding-top: 18px;
-      text-transform: uppercase;
-      font-size: 10px;
-      letter-spacing: 0.14em;
-      color: var(--faint);
-    }
-    .footer-links { display: flex; gap: 26px; }
-    .footer-links a { color: var(--dim); transition: color .2s; }
-    .footer-links a:hover { color: var(--wht); }
-    .footer-links a::after { content: ' ↗'; color: var(--faint); }
-    .footer-mail {
-      color: var(--wht);
-      font-weight: 700;
-      letter-spacing: 0.14em;
-    }
-    .footer-mail:hover { color: var(--sig); }
-
-    /* ============ RESPONSIVE ============ */
-    @media (max-width: 900px) {
-      :root { --pad: 18px; }
-      .about-grid { grid-template-columns: 1fr; gap: 6vh; }
-      .stack-list { grid-template-columns: repeat(2, 1fr); }
-      .exp-row { grid-template-columns: 1fr; gap: 10px; padding: 28px 0; }
-      .edu-grid { grid-template-columns: 1fr; }
-      .work-row { grid-template-columns: 48px 1fr; }
-      .work-meta { display: none; }
-      .work-desc { grid-column: 1 / 3; }
-      .pub-row { grid-template-columns: 1fr; gap: 16px; }
-      .pub-row .tag { writing-mode: horizontal-tb; transform: none; }
-      .hud-bl { display: none; }
-      .hero-sub { flex-direction: column; }
-      .footer { min-height: 70svh; }
-      #totem { right: -30vw; width: 105vw; height: 105vw; top: 36%; }
-      #totem.on { opacity: .34; }
-      .totem-tag { display: none; }
-    }
-    @media (max-width: 560px) {
-      .hud-tr a:not(:last-child) { display: none; }
-      .hero-name { font-size: clamp(3rem, 19vw, 6rem); }
-      .hero-name .r2 .idx { display: none; }
-    }
-
-    /* ============ REDUCED MOTION ============ */
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation: none !important; transition: none !important; }
-      .hero-name .row > span { transform: none; }
-      .hero-sub { opacity: 1; }
-      .rv { opacity: 1; transform: none; }
-      .loader { display: none; }
-      #totem, .totem-tag { opacity: 1; }
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,100..900&family=Covered+By+Your+Grace&family=Hanken+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css">
 </head>
-<body>
+<body class="is-loading">
 
-  <!-- ============ PRELOADER ============ -->
+  <!-- shared SVG: rough-edge filter + hand-drawn arrow -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <filter id="rough" x="-5%" y="-40%" width="110%" height="180%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.035 0.6" numOctaves="2" seed="4" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="5"/>
+      </filter>
+      <symbol id="arrow" viewBox="0 0 56 56">
+        <path d="M6 46 C 14 22, 30 12, 48 12"/>
+        <path d="M36 5 L 49 12 L 39 23"/>
+      </symbol>
+    </defs>
+  </svg>
+
   <div class="loader" id="loader" aria-hidden="true">
-    <div class="loader-top">
-      <span>Please stand by<span class="blink">_</span></span>
-      <span>Siddhi Rohan / Portfolio v5</span>
-    </div>
-    <div class="loader-bottom">
-      <span class="loader-top" style="align-self:flex-end">Loading system</span>
-      <span class="loader-count" id="loaderCount">000</span>
-    </div>
-    <div class="loader-bar" id="loaderBar"></div>
-  </div>
-
-  <div class="grid-overlay" aria-hidden="true"></div>
-
-  <!-- ============ CROSSHAIR ============ -->
-  <div class="xh-x" id="xhX" aria-hidden="true"></div>
-  <div class="xh-y" id="xhY" aria-hidden="true"></div>
-  <div class="xh-tag" id="xhTag" aria-hidden="true"></div>
-
-  <!-- ============ PROJECT OBJECT PREVIEW ============ -->
-  <div class="peek" id="peek" aria-hidden="true">
-    <canvas id="peekCanvas"></canvas>
-    <div class="peek-bar t"><span id="peekName">OBJ</span><span class="sig">&#9670; Live</span></div>
-    <div class="peek-bar b"><span id="peekStat"></span><span>Scan</span></div>
-  </div>
-
-  <!-- ============ HUD ============ -->
-  <div class="hud">
-    <div class="bar-top" aria-hidden="true"></div>
-    <div class="bar-bottom" aria-hidden="true"></div>
-    <div class="hud-tl"><span class="mark">◆</span><strong><a href="#top">SIDDHI ROHAN</a></strong></div>
-    <div class="hud-tr">
-      <a href="#about" data-scramble>About</a>
-      <a href="#work" data-scramble>Work</a>
-      <a href="#experience" data-scramble>Experience</a>
-      <a href="#contact" data-scramble>Contact</a>
-    </div>
-    <div class="hud-bl">
-      <span>San Jose, CA</span>
-      <span>37.3382°N / 121.8863°W</span>
-    </div>
-    <div class="hud-br">
-      <span><span class="dot"></span>Open to work</span>
-      <span id="clock">--:--:--</span>
+    <div class="loader-in">
+      <div class="d loader-n" id="loaderN">00</div>
+      <div class="hand loader-t">untangling the data…</div>
     </div>
   </div>
 
-  <!-- ============ HERO ============ -->
-  <header class="hero" id="top">
-    <canvas id="field" aria-hidden="true"></canvas>
-    <canvas id="totem" aria-hidden="true"></canvas>
-    <span class="totem-tag" id="totemTag" aria-hidden="true"></span>
-    <div class="hero-inner">
-      <div class="hero-pre">
-        <span>Data Scientist <span class="sig">/</span> Data Engineer</span>
-        <span>Portfolio 2026</span>
-      </div>
-      <h1 class="hero-name">
-        <span class="row"><span>Siddhi</span></span>
-        <span class="row r2"><span><span class="idx">[UMD MS '26]</span><span class="outline">Rohan</span></span></span>
-      </h1>
-      <div class="hero-sub">
-        <p>I take <strong>messy, unstructured data</strong> and build <strong>auditable, end-to-end AI systems</strong>: production RAG that cut LLM hallucinations 40%, 20+ Airflow pipelines consolidating 10+ enterprise systems, and open-source AI governance middleware.</p>
-        <a class="cta" href="#work" data-scramble>View selected work</a>
-      </div>
-    </div>
+  <canvas id="gl" aria-hidden="true"></canvas>
+  <div class="vignette" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <i class="corner tl" aria-hidden="true"></i><i class="corner tr" aria-hidden="true"></i>
+  <i class="corner bl" aria-hidden="true"></i><i class="corner br" aria-hidden="true"></i>
+  <div class="progress" aria-hidden="true"><i id="progress"></i></div>
+  <div class="cursor" id="cursor" aria-hidden="true"></div>
+
+  <header class="top">
+    <a class="brand" href="#top" aria-label="Siddhi Rohan, back to top">Data / Models / <span class="cycle hot" id="cycle">Pipelines</span></a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#work">Work</a>
+      <a href="#experience">Experience</a>
+      <a href="#contact" class="keep">Contact</a>
+    </nav>
   </header>
 
-  <!-- ============ MAIN ============ -->
-  <div class="main" id="main">
+  <main>
 
-    <!-- ABOUT -->
-    <section class="sec" id="about">
-      <div class="sec-head rv">
-        <h2 class="sec-title">About<span class="thin">me</span> <span class="plus">+</span></h2>
-        <span class="sec-idx">01</span>
+    <!-- ================= HERO ================= -->
+    <section class="hero" id="top" data-shape="bust" data-x="0.6" data-y="-0.04" data-scale="1.55" data-alpha="1">
+      <video class="hero-vid" src="assets/video/smoke.mp4" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
+      <div class="lift">
+        <p class="hand hero-note" data-fade><svg class="scribble" aria-hidden="true"><use href="#arrow"/></svg>I make messy data confess</p>
+        <h1 class="d name" aria-label="Siddhi Rohan"><span data-split>Siddhi</span><span class="gap"></span><span class="hot" data-split>Rohan</span></h1>
+        <svg class="brush hero-brush" viewBox="0 0 1000 22" preserveAspectRatio="none" aria-hidden="true"><path data-draw d="M4 13 C 180 4, 420 18, 640 9 S 900 12, 996 8"/></svg>
+        <ul class="hero-links" data-fade>
+          <li><a href="https://www.linkedin.com/in/siddhi-rohan/" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+          <li><a href="https://github.com/SiddhiRohan" target="_blank" rel="noopener">GitHub ↗</a></li>
+          <li><a href="https://doi.org/10.1109/ICCD59681.2023.10420779" target="_blank" rel="noopener">IEEE Paper ↗</a></li>
+        </ul>
+        <p class="hero-role" data-fade><strong>Data Scientist / Data Engineer.</strong> MS Data Science at the University of Maryland, May 2026. Three-plus years shipping GenAI, pipelines, and the guardrails around them.</p>
       </div>
-      <div class="about-grid">
-        <div class="rv">
-          <p class="about-lede">MS Data Science candidate at the University of Maryland (May 2026) with 3+ years building production systems that solve real problems <em>and hold up under scrutiny.</em></p>
-          <div class="about-body">
-            <p>My work spans <strong>generative AI, data engineering, and AI governance</strong>: from a production RAG pipeline that reduced chatbot hallucinations 40% across 5,000+ monthly queries, to ETL and data-quality frameworks over millions of records, to open-source middleware that enforces access control on what language models can see and say.</p>
-            <p>Currently building <strong>NLP-driven ETL and geospatial data systems</strong> for environmental research, and exploring self-improving local LLMs on consumer hardware.</p>
+      <p class="hand dig lift" data-fade><span class="arrow-d">↓</span> keep digging</p>
+      <p class="mono avail lift" data-fade><i></i>Open to work · San Jose, CA · <span id="clock">--:--</span></p>
+    </section>
+
+    <!-- ================= MANIFESTO ================= -->
+    <section class="manifesto" id="about" data-shape="chaos" data-x="0" data-y="0" data-scale="1.7" data-alpha="0.5">
+      <div class="lift">
+        <h2 class="d big" data-widen><span data-split>First, the mess.</span></h2>
+        <h2 class="d big hot l2" data-widen><span data-split>Then the pipeline…</span></h2>
+        <svg class="brush" viewBox="0 0 400 22" preserveAspectRatio="none" aria-hidden="true"><path data-draw d="M4 12 C 90 4, 210 19, 396 8"/></svg>
+
+        <div class="manifesto-body">
+          <div>
+            <p class="manifesto-copy" data-fade>Hebrew soil records across <em>900 tables</em>. Ten enterprise systems that never agreed on anything. A chatbot that made things up. I turn that into pipelines, models, and AI systems that can <em>show their work</em>.</p>
+            <p class="hand" data-fade>and hold up under scrutiny →</p>
           </div>
-        </div>
-        <div class="rv">
-          <div class="datarow">
-            <span class="k">Hallucination reduction</span>
-            <span class="leader"></span>
-            <span class="v">40%</span>
+          <div class="stats">
+            <div class="stat" data-fade><span class="d n" data-count="40" data-suffix="%">40%</span><span class="k">fewer LLM<br>hallucinations</span></div>
+            <div class="stat" data-fade><span class="d n" data-count="20" data-suffix="+">20+</span><span class="k">Airflow pipelines<br>orchestrated</span></div>
+            <div class="stat" data-fade><span class="d n" data-count="5" data-suffix="K+">5K+</span><span class="k">monthly queries<br>in production</span></div>
+            <div class="stat" data-fade><span class="d n" data-count="15" data-suffix="K+">15K+</span><span class="k">soil records<br>translated &amp; standardized</span></div>
           </div>
-          <div class="datarow">
-            <span class="k">Airflow pipelines orchestrated</span>
-            <span class="leader"></span>
-            <span class="v">20+</span>
-          </div>
-          <div class="datarow">
-            <span class="k">Monthly queries served</span>
-            <span class="leader"></span>
-            <span class="v">5K+</span>
-          </div>
-          <div class="datarow">
-            <span class="k">IEEE publication</span>
-            <span class="leader"></span>
-            <span class="v">01</span>
-          </div>
-          <div class="datarow">
-            <span class="k">Based</span>
-            <span class="leader"></span>
-            <span class="v" style="font-size:1.1rem">San Jose, CA</span>
-          </div>
-        </div>
-      </div>
-      <div class="stack rv">
-        <p class="stack-label">Stack index /</p>
-        <div class="stack-list">
-          <span>Python</span><span>SQL</span><span>PostgreSQL</span><span>MongoDB</span>
-          <span>PyTorch</span><span>TensorFlow</span><span>Scikit-Learn</span><span>Pandas</span>
-          <span>Apache Airflow</span><span>FastAPI</span><span>FAISS</span><span>Supabase</span>
-          <span>LLM Fine-Tuning</span><span>Tableau</span><span>Power BI</span><span>ArcGIS</span>
         </div>
       </div>
     </section>
 
-    <!-- WORK -->
-    <section class="sec" id="work">
-      <div class="sec-head rv">
-        <h2 class="sec-title">Selected<span class="thin">work</span> <span class="plus">+</span></h2>
-        <span class="sec-idx">02</span>
+    <div class="band" aria-hidden="true">
+      <div class="band-track">
+        <span>Python</span><span>SQL</span><span>Apache Airflow</span><span>PyTorch</span><span>PostgreSQL</span><span>FastAPI</span><span>FAISS</span><span>RAG</span><span>LoRA</span><span>Supabase</span><span>ArcGIS</span><span>Tableau</span>
+        <span>Python</span><span>SQL</span><span>Apache Airflow</span><span>PyTorch</span><span>PostgreSQL</span><span>FastAPI</span><span>FAISS</span><span>RAG</span><span>LoRA</span><span>Supabase</span><span>ArcGIS</span><span>Tableau</span>
       </div>
-      <div class="work-list rv">
-
-        <a class="work-row" data-totem="scales" href="https://github.com/SiddhiRohan/arbiter" target="_blank" rel="noopener">
-          <span class="no">/001</span>
-          <h3>Arbiter</h3>
-          <span class="work-meta">
-            <span>AI Governance / Open Source</span>
-            <span>FastAPI / RBAC / LLM Security</span>
-            <span class="arrow">↗</span>
-          </span>
-          <span class="work-desc">Bidirectional AI governance middleware for LLM applications. Enforces role-based access control before the model sees a query, detects inference-channel and cross-query accumulation attacks, and scans outputs for policy violations in FERPA/HIPAA contexts.</span>
-        </a>
-
-        <a class="work-row" data-totem="brain" href="https://github.com/SiddhiRohan/morpheus" target="_blank" rel="noopener">
-          <span class="no">/002</span>
-          <h3>Morpheus</h3>
-          <span class="work-meta">
-            <span>Self-Improving Local LLM</span>
-            <span>Qwen 2.5-3B / LoRA / Claude Critic</span>
-            <span class="arrow">&#8599;</span>
-          </span>
-          <span class="work-desc">A local LLM (Qwen 2.5-3B) that fine-tunes its own LoRA adapters in real time during conversation, using Claude Sonnet as an automated critic to generate training signal, running concurrent inference and training on a single consumer GPU with under 2GB VRAM overhead.</span>
-        </a>
-
-        <a class="work-row" data-totem="heart" href="https://github.com/SiddhiRohan/MedPal" target="_blank" rel="noopener">
-          <span class="no">/003</span>
-          <h3>MedPal</h3>
-          <span class="work-meta">
-            <span>AI + Healthcare</span>
-            <span>Gemini API / Streamlit / Plotly</span>
-            <span class="arrow">↗</span>
-          </span>
-          <span class="work-desc">AI-powered wellness companion with adaptive study planning, PDF summarization, flashcard generation, and real-time burnout detection using sentiment analysis.</span>
-        </a>
-
-        <a class="work-row" data-totem="bridge" href="https://github.com/SiddhiRohan/MealBridge" target="_blank" rel="noopener">
-          <span class="no">/004</span>
-          <h3>MealBridge</h3>
-          <span class="work-meta">
-            <span>Social Impact</span>
-            <span>Flask / Google ADK / Maps API</span>
-            <span class="arrow">↗</span>
-          </span>
-          <span class="work-desc">Food redistribution platform connecting donors with NGOs through AI-powered matching, Google Maps route optimization, and automated volunteer coordination.</span>
-        </a>
-
-        <a class="work-row" data-totem="coin" href="https://git.new/IhGAjSq" target="_blank" rel="noopener">
-          <span class="no">/005</span>
-          <h3>BTC Sentiment</h3>
-          <span class="work-meta">
-            <span>NLP + Finance</span>
-            <span>spaCy / Selenium / Docker</span>
-            <span class="arrow">↗</span>
-          </span>
-          <span class="work-desc">Real-time sentiment pipeline combining Selenium scraping, spaCy NLP, and VADER scoring with price correlation analysis in a Dockerized environment.</span>
-        </a>
-
-      </div>
-    </section>
-
-    <!-- EXPERIENCE -->
-    <section class="sec" id="experience">
-      <div class="sec-head rv">
-        <h2 class="sec-title">Exper<span class="thin">ience</span> <span class="plus">+</span></h2>
-        <span class="sec-idx">03</span>
-      </div>
-      <div class="exp-list rv">
-
-        <div class="exp-row">
-          <span class="when">2025 / Now</span>
-          <div>
-            <h3>Data Engineer</h3>
-            <p class="org">UMD / Environmental Science &amp; Technology</p>
-          </div>
-          <p class="what">Built a Python/NLP ETL pipeline translating and standardizing 15,000+ Hebrew soil records across 900+ relational tables. Loaded into PostgreSQL on Supabase powering a trilingual web app that cut retrieval time ~60%, with ArcGIS integration for spatial soil-profile queries.</p>
-        </div>
-
-        <div class="exp-row">
-          <span class="when">2024 / 2025</span>
-          <div>
-            <h3>Data Engineer / Research Data Scientist</h3>
-            <p class="org">UMD / Agricultural &amp; Resource Economics</p>
-          </div>
-          <p class="what">Redesigned a 50+ table schema and built the team's first repeatable data-quality framework; validation pipelines improved accuracy 20% and cut preprocessing 35%. Analyzed 200+ automotive production records across 5 regions, quantifying a 15% output decline via trend decomposition and spatial clustering.</p>
-        </div>
-
-        <div class="exp-row">
-          <span class="when">2023 / 2024</span>
-          <div>
-            <h3>Data Scientist</h3>
-            <p class="org">StackNexus / Hyderabad, India</p>
-          </div>
-          <p class="what">Architected a RAG pipeline (vector search, chunking, LLM generation) reducing hallucinations 40% and improving accuracy 25% across 5,000+ monthly queries. EDA and segmentation across 12+ cohorts drove A/B tests with a 17% engagement lift; feature-extraction modules cut manual data entry 50%.</p>
-        </div>
-
-        <div class="exp-row">
-          <span class="when">2024</span>
-          <div>
-            <h3>AI Engineer</h3>
-            <p class="org">Kridha AI / Stanford, CA</p>
-          </div>
-          <p class="what">Prototyped and validated classification and decision-automation pipelines for an AI product, testing 200+ edge cases to lift output accuracy 18%; logic shipped to early adopters.</p>
-        </div>
-
-        <div class="exp-row">
-          <span class="when">2023</span>
-          <div>
-            <h3>Data Scientist</h3>
-            <p class="org">Adventaus Technologies / Bengaluru, India</p>
-          </div>
-          <p class="what">Engineered ML anomaly detection over infrastructure telemetry, cutting alert-review effort ~20%. Trained classification models on ~50K incident records; NLP ticket classification hit ~85% accuracy across 30K+ records; time-series forecasts supported capacity planning.</p>
-        </div>
-
-        <div class="exp-row">
-          <span class="when">2022 / 2023</span>
-          <div>
-            <h3>Data Engineer</h3>
-            <p class="org">Adventaus Technologies / Bengaluru, India</p>
-          </div>
-          <p class="what">Built Python/SQL ETL consolidating 10+ enterprise systems into centralized analytics repositories. Orchestrated 20+ Apache Airflow pipelines, trimming 8-10 hours of weekly manual reporting; data-quality validation across millions of records; query optimization cut dashboard load times 25-35%.</p>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- EDUCATION / RESEARCH -->
-    <section class="sec" id="education">
-      <div class="sec-head rv">
-        <h2 class="sec-title">Educat<span class="thin">ion</span> <span class="plus">+</span></h2>
-        <span class="sec-idx">04</span>
-      </div>
-      <div class="edu-grid rv">
-        <div class="edu-cell">
-          <h3>University of Maryland</h3>
-          <p class="sub">Master of Science, Data Science<br>GPA 3.87 · 2024 / 2026</p>
-        </div>
-        <div class="edu-cell">
-          <h3>Osmania University</h3>
-          <p class="sub">Bachelor of Engineering, Mechanical</p>
-        </div>
-      </div>
-      <a class="pub-row rv" href="https://doi.org/10.1109/ICCD59681.2023.10420779" target="_blank" rel="noopener">
-        <span class="tag">IEEE 2023</span>
-        <div>
-          <h3>Neural Network-Based Synthesis for Digital Sound Processing</h3>
-          <p class="where">Intl. Conference on Cognitive Computing and Complex Data (ICCD 2023)</p>
-        </div>
-        <span class="arrow">↗</span>
-      </a>
-    </section>
-
-    <!-- spacer that lets fixed footer reveal -->
-  </div>
-
-  <!-- ============ FOOTER (revealed under main) ============ -->
-  <footer class="footer" id="contact">
-    <p class="footer-idx">05 / Contact</p>
-    <h2><a href="mailto:siddhirohanwork@gmail.com">Get in<br>touch ↗</a></h2>
-    <div class="footer-row">
-      <a class="footer-mail" href="mailto:siddhirohanwork@gmail.com">siddhirohanwork@gmail.com</a>
-      <div class="footer-links">
-        <a href="https://www.linkedin.com/in/siddhi-rohan/" target="_blank" rel="noopener">LinkedIn</a>
-        <a href="https://github.com/SiddhiRohan" target="_blank" rel="noopener">GitHub</a>
-      </div>
-      <span>© 2026 Siddhi Rohan</span>
     </div>
-  </footer>
 
-  <script>
-    (function () {
-      'use strict';
-      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    <!-- ================= SKILLS ================= -->
+    <section class="skills" data-shape="grid" data-x="0.1" data-y="-0.1" data-scale="2.1" data-alpha="0.9">
+      <div class="lift">
+        <div class="skill" data-fade>
+          <span class="no">01</span>
+          <h3 class="d">Generative AI</h3>
+          <ul><li>RAG</li><li>LLM Fine-Tuning</li><li>LoRA</li><li>FAISS</li><li>Vector Search</li><li>Evaluation</li></ul>
+        </div>
+        <div class="skill" data-fade>
+          <span class="no">02</span>
+          <h3 class="d">Data Engineering</h3>
+          <ul><li>Python</li><li>SQL</li><li>Apache Airflow</li><li>PostgreSQL</li><li>MongoDB</li><li>Supabase</li><li>ETL</li></ul>
+        </div>
+        <div class="skill" data-fade>
+          <span class="no">03</span>
+          <h3 class="d">AI Governance</h3>
+          <ul><li>RBAC</li><li>Output Scanning</li><li>FERPA / HIPAA</li><li>FastAPI</li><li>Audit Trails</li></ul>
+          <p class="hand"><svg class="scribble" aria-hidden="true"><use href="#arrow"/></svg>the unglamorous part. my favourite.</p>
+        </div>
+        <div class="skill" data-fade>
+          <span class="no">04</span>
+          <h3 class="d">ML &amp; Analytics</h3>
+          <ul><li>PyTorch</li><li>TensorFlow</li><li>Scikit-Learn</li><li>Pandas</li><li>Tableau</li><li>Power BI</li><li>ArcGIS</li></ul>
+        </div>
+      </div>
+    </section>
 
-      /* ============ PRELOADER ============ */
-      var loader = document.getElementById('loader');
-      var countEl = document.getElementById('loaderCount');
-      var barEl = document.getElementById('loaderBar');
+    <!-- ================= WORK ================= -->
+    <section class="work-head" id="work">
+      <div class="lift">
+        <h2 class="d big" data-widen><span data-split>Built some.</span></h2>
+        <h2 class="d big hot l2" data-widen><span data-split>One teaches itself…</span></h2>
+        <svg class="brush" viewBox="0 0 400 22" preserveAspectRatio="none" aria-hidden="true"><path data-draw d="M4 10 C 120 18, 250 3, 396 12"/></svg>
+      </div>
+    </section>
 
-      function finishLoad() {
-        document.body.classList.add('ready');
-        loader.classList.add('done');
-        setTimeout(function () { loader.style.display = 'none'; }, 800);
-      }
+    <section class="proj" data-shape="scales" data-x="0.2" data-y="0.3" data-scale="0.95" data-alpha="0.95">
+      <div class="proj-text lift">
+        <p class="proj-no">01 <span>AI Governance / Open Source</span></p>
+        <h3 class="d proj-title" data-widen><a href="https://github.com/SiddhiRohan/arbiter" target="_blank" rel="noopener" data-split>Arbiter</a></h3>
+        <p class="hand proj-tag" data-fade>a bouncer for your LLM</p>
+        <p class="proj-desc" data-fade>Bidirectional AI governance middleware for LLM applications. Enforces role-based access control before the model ever sees a query, detects inference-channel and cross-query accumulation attacks, and scans outputs for policy violations in FERPA/HIPAA contexts.</p>
+        <ul class="tags" data-fade><li>FastAPI</li><li>RBAC</li><li>LLM Security</li></ul>
+        <a class="btn" href="https://github.com/SiddhiRohan/arbiter" target="_blank" rel="noopener" data-fade>View on GitHub <span>↗</span></a>
+      </div>
+      <figure class="proj-art" data-art>
+        <div class="frame"><i class="tape"></i><img src="assets/img/arbiter.jpg" alt="A brass balance scale weighing glowing fibre-optic threads against a steel padlock" loading="lazy" width="1024" height="688"><figcaption class="hand"><span>arbiter</span><span>fig. 01</span></figcaption></div>
+      </figure>
+    </section>
 
-      if (reduced) {
-        document.body.classList.add('ready');
-        loader.style.display = 'none';
-      } else {
-        var n = 0;
-        var iv = setInterval(function () {
-          n += Math.floor(Math.random() * 14) + 4;
-          if (n >= 100) {
-            n = 100;
-            clearInterval(iv);
-            countEl.textContent = '100';
-            barEl.style.width = '100%';
-            setTimeout(finishLoad, 220);
-          } else {
-            countEl.textContent = String(n).padStart(3, '0');
-            barEl.style.width = n + '%';
-          }
-        }, 90);
-      }
+    <section class="proj flip" data-shape="brain" data-x="-0.2" data-y="0.3" data-scale="0.95" data-alpha="0.95">
+      <div class="proj-text lift">
+        <p class="proj-no">02 <span>Self-Improving Local LLM</span></p>
+        <h3 class="d proj-title" data-widen><a href="https://github.com/SiddhiRohan/morpheus" target="_blank" rel="noopener" data-split>Morpheus</a></h3>
+        <p class="hand proj-tag" data-fade>it fine-tunes itself. mid-conversation.</p>
+        <p class="proj-desc" data-fade>A local LLM (Qwen 2.5-3B) that fine-tunes its own LoRA adapters in real time during conversation, using Claude Sonnet as an automated critic to generate training signal. Concurrent inference and training on a single consumer GPU with under 2GB VRAM overhead.</p>
+        <ul class="tags" data-fade><li>Qwen 2.5-3B</li><li>LoRA</li><li>Claude Critic</li></ul>
+        <a class="btn" href="https://github.com/SiddhiRohan/morpheus" target="_blank" rel="noopener" data-fade>View on GitHub <span>↗</span></a>
+      </div>
+      <figure class="proj-art" data-art>
+        <div class="frame"><i class="tape"></i><img src="assets/img/morpheus.jpg" alt="A cracked plaster head with glowing circuitry inside the cracks, beside a soldering iron" loading="lazy" width="1024" height="688"><figcaption class="hand"><span>morpheus</span><span>fig. 02</span></figcaption></div>
+      </figure>
+    </section>
 
-      /* ============ LIVE CLOCK (Pacific time) ============ */
-      var clock = document.getElementById('clock');
-      function tickClock() {
-        try {
-          clock.textContent = new Date().toLocaleTimeString('en-US', {
-            timeZone: 'America/Los_Angeles', hour12: false,
-            hour: '2-digit', minute: '2-digit', second: '2-digit'
-          }) + ' PT';
-        } catch (e) {
-          clock.textContent = new Date().toLocaleTimeString('en-US', { hour12: false });
-        }
-      }
-      tickClock();
-      setInterval(tickClock, 1000);
+    <section class="proj" data-shape="heart" data-x="0.2" data-y="0.3" data-scale="0.9" data-alpha="0.95">
+      <div class="proj-text lift">
+        <p class="proj-no">03 <span>AI + Healthcare</span></p>
+        <h3 class="d proj-title" data-widen><a href="https://github.com/SiddhiRohan/MedPal" target="_blank" rel="noopener" data-split>MedPal</a></h3>
+        <p class="hand proj-tag" data-fade>a study buddy that notices burnout</p>
+        <p class="proj-desc" data-fade>AI-powered wellness companion with adaptive study planning, PDF summarization, flashcard generation, and real-time burnout detection using sentiment analysis.</p>
+        <ul class="tags" data-fade><li>Gemini API</li><li>Streamlit</li><li>Plotly</li></ul>
+        <a class="btn" href="https://github.com/SiddhiRohan/MedPal" target="_blank" rel="noopener" data-fade>View on GitHub <span>↗</span></a>
+      </div>
+      <figure class="proj-art" data-art>
+        <div class="frame"><i class="tape"></i><img src="assets/img/medpal.jpg" alt="A glass anatomical heart on a desk beside textbooks and a stethoscope" loading="lazy" width="1024" height="688"><figcaption class="hand"><span>medpal</span><span>fig. 03</span></figcaption></div>
+      </figure>
+    </section>
 
-      /* ============ FOOTER REVEAL SPACER ============ */
-      var footer = document.querySelector('.footer');
-      var main = document.getElementById('main');
-      function sizeFooter() {
-        main.style.marginBottom = footer.offsetHeight + 'px';
-      }
-      sizeFooter();
-      window.addEventListener('resize', sizeFooter);
-      window.addEventListener('load', sizeFooter);
+    <section class="proj flip" data-shape="bridge" data-x="-0.2" data-y="0.34" data-scale="1.05" data-alpha="0.95">
+      <div class="proj-text lift">
+        <p class="proj-no">04 <span>Social Impact</span></p>
+        <h3 class="d proj-title" data-widen><a href="https://github.com/SiddhiRohan/MealBridge" target="_blank" rel="noopener" data-split>MealBridge</a></h3>
+        <p class="hand proj-tag" data-fade>leftovers → logistics</p>
+        <p class="proj-desc" data-fade>Food redistribution platform connecting donors with NGOs through AI-powered matching, Google Maps route optimization, and automated volunteer coordination.</p>
+        <ul class="tags" data-fade><li>Flask</li><li>Google ADK</li><li>Maps API</li></ul>
+        <a class="btn" href="https://github.com/SiddhiRohan/MealBridge" target="_blank" rel="noopener" data-fade>View on GitHub <span>↗</span></a>
+      </div>
+      <figure class="proj-art" data-art>
+        <div class="frame"><i class="tape"></i><img src="assets/img/mealbridge.jpg" alt="Bowls of steaming food on a wooden plank bridging two concrete blocks" loading="lazy" width="1024" height="688"><figcaption class="hand"><span>mealbridge</span><span>fig. 04</span></figcaption></div>
+      </figure>
+    </section>
 
-      /* ============ BACKGROUND: WEBGL WIREFRAME TERRAIN (2D field fallback) ============ */
-      var canvas = document.getElementById('field');
-      var mouse = { x: -9999, y: -9999 };
-      var running = !reduced;
-      window.__bgMode = 'none';
+    <section class="proj" data-shape="coin" data-x="0.2" data-y="0.3" data-scale="0.85" data-alpha="0.95">
+      <div class="proj-text lift">
+        <p class="proj-no">05 <span>NLP + Finance</span></p>
+        <h3 class="d proj-title" data-widen><a href="https://git.new/IhGAjSq" target="_blank" rel="noopener" data-split>BTC Sentiment</a></h3>
+        <p class="hand proj-tag" data-fade>vibes, quantified</p>
+        <p class="proj-desc" data-fade>Real-time sentiment pipeline combining Selenium scraping, spaCy NLP, and VADER scoring with price correlation analysis in a Dockerized environment.</p>
+        <ul class="tags" data-fade><li>spaCy</li><li>Selenium</li><li>Docker</li></ul>
+        <a class="btn" href="https://git.new/IhGAjSq" target="_blank" rel="noopener" data-fade>View on GitHub <span>↗</span></a>
+      </div>
+      <figure class="proj-art" data-art>
+        <div class="frame"><i class="tape"></i><img src="assets/img/btc.jpg" alt="A gold coin balanced on crumpled newspaper lit by a glowing price chart" loading="lazy" width="1024" height="688"><figcaption class="hand"><span>btc sentiment</span><span>fig. 05</span></figcaption></div>
+      </figure>
+    </section>
 
-      canvas.parentElement.addEventListener('pointermove', function (e) {
-        var r = canvas.getBoundingClientRect();
-        mouse.x = e.clientX - r.left;
-        mouse.y = e.clientY - r.top;
-      });
-      canvas.parentElement.addEventListener('pointerleave', function () {
-        mouse.x = -9999; mouse.y = -9999;
-      });
+    <!-- ================= EXPERIENCE ================= -->
+    <section class="exp" id="experience" data-shape="chaos" data-x="0.3" data-y="0" data-scale="1.9" data-alpha="0.3">
+      <div class="lift">
+        <p class="exp-kicker">Experience / 2022 → <span class="hand">now</span></p>
+        <h2 class="d big" data-widen><span data-split>The part with</span> <span class="hot" data-split>paychecks.</span></h2>
 
-      function initWebGLTerrain() {
-        var gl = canvas.getContext('webgl', { alpha: true, antialias: true, powerPreference: 'low-power' });
-        if (!gl) return false;
+        <div class="jobs">
+          <article class="job" data-fade>
+            <p class="yrs">2025 → <b>Now</b></p>
+            <div><h3 class="d">Data Engineer</h3><p class="mono org">UMD / Environmental Science &amp; Technology</p></div>
+            <p class="what">Built a Python/NLP ETL pipeline translating and standardizing <b>15,000+ Hebrew soil records across 900+ relational tables</b>. Loaded into PostgreSQL on Supabase powering a trilingual web app that cut retrieval time ~60%, with ArcGIS integration for spatial soil-profile queries.</p>
+          </article>
+          <article class="job" data-fade>
+            <p class="yrs">2024 → 2025</p>
+            <div><h3 class="d">Data Engineer / Research Data Scientist</h3><p class="mono org">UMD / Agricultural &amp; Resource Economics</p></div>
+            <p class="what">Redesigned a 50+ table schema and built the team's first repeatable data-quality framework; validation pipelines <b>improved accuracy 20% and cut preprocessing 35%</b>. Analyzed 200+ automotive production records across 5 regions, quantifying a 15% output decline via trend decomposition and spatial clustering.</p>
+          </article>
+          <article class="job" data-fade>
+            <p class="yrs">2023 → 2024</p>
+            <div><h3 class="d">Data Scientist</h3><p class="mono org">StackNexus / Hyderabad, India</p></div>
+            <p class="what">Architected a RAG pipeline (vector search, chunking, LLM generation) <b>reducing hallucinations 40% and improving accuracy 25%</b> across 5,000+ monthly queries. EDA and segmentation across 12+ cohorts drove A/B tests with a 17% engagement lift; feature-extraction modules cut manual data entry 50%.</p>
+          </article>
+          <article class="job" data-fade>
+            <p class="yrs">2024</p>
+            <div><h3 class="d">AI Engineer</h3><p class="mono org">Kridha AI / Stanford, CA</p></div>
+            <p class="what">Prototyped and validated classification and decision-automation pipelines for an AI product, testing 200+ edge cases to <b>lift output accuracy 18%</b>; logic shipped to early adopters.</p>
+          </article>
+          <article class="job" data-fade>
+            <p class="yrs">2023</p>
+            <div><h3 class="d">Data Scientist</h3><p class="mono org">Adventaus Technologies / Bengaluru, India</p></div>
+            <p class="what">Engineered ML anomaly detection over infrastructure telemetry, cutting alert-review effort ~20%. Trained classification models on ~50K incident records; <b>NLP ticket classification hit ~85% accuracy</b> across 30K+ records; time-series forecasts supported capacity planning.</p>
+          </article>
+          <article class="job" data-fade>
+            <p class="yrs">2022 → 2023</p>
+            <div><h3 class="d">Data Engineer</h3><p class="mono org">Adventaus Technologies / Bengaluru, India</p></div>
+            <p class="what">Built Python/SQL ETL consolidating 10+ enterprise systems into centralized analytics repositories. <b>Orchestrated 20+ Apache Airflow pipelines</b>, trimming 8-10 hours of weekly manual reporting; data-quality validation across millions of records; query optimization cut dashboard load times 25-35%.</p>
+          </article>
+        </div>
+      </div>
+    </section>
 
-        var VS = [
-          'precision mediump float;',
-          'attribute vec2 aGrid;',            // x in [-1,1], z in [0,1]
-          'uniform float uTime;',
-          'uniform float uAspect;',
-          'varying float vDepth;',
-          'varying float vWorldZ;',
-          'float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }',
-          'float vnoise(vec2 p){',
-          '  vec2 i = floor(p); vec2 f = fract(p);',
-          '  vec2 u = f * f * (3.0 - 2.0 * f);',
-          '  return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), u.x),',
-          '             mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x), u.y);',
-          '}',
-          'float fbm(vec2 p){',
-          '  float v = 0.0;',
-          '  v += 0.60 * vnoise(p);',
-          '  v += 0.28 * vnoise(p * 2.1 + 7.3);',
-          '  v += 0.12 * vnoise(p * 4.3 + 13.7);',
-          '  return v;',
-          '}',
-          'void main(){',
-          '  float worldX = aGrid.x * 4.2;',
-          '  float worldZ = aGrid.y * 9.0 + 1.1;',
-          '  vec2 np = vec2(worldX * 0.55, worldZ * 0.55 - uTime * 0.10);',
-          '  float h = fbm(np);',
-          '  float valley = 1.0 - 0.55 * exp(-worldX * worldX * 0.28);', // keep a low channel mid-screen
-          '  float worldY = -0.92 + h * 0.85 * valley;',
-          '  float focal = 1.05;',
-          '  float sx = worldX * focal / worldZ;',
-          '  float sy = (worldY * focal / worldZ) * uAspect + 0.18;',
-          '  vDepth = clamp((worldZ - 1.1) / 9.0, 0.0, 1.0);',
-          '  vWorldZ = worldZ;',
-          '  gl_Position = vec4(sx, sy, vDepth * 2.0 - 1.0, 1.0);',
-          '}'
-        ].join('\n');
+    <!-- ================= EDUCATION + PUBLICATION ================= -->
+    <section class="paper" id="education" data-shape="grid" data-x="0" data-y="-0.2" data-scale="2.1" data-alpha="0.6">
+      <div class="lift">
+        <h2 class="d big" data-widen><span data-split>Also, on paper.</span></h2>
+        <h2 class="d big hot l2" data-widen><span data-split>Literally.</span></h2>
+        <div class="paper-grid">
+          <div class="card" data-fade>
+            <p class="mono">MS · GPA 3.87 · 2024 → 2026</p>
+            <h3 class="d">University of Maryland</h3>
+            <p>Master of Science, Data Science</p>
+          </div>
+          <div class="card" data-fade>
+            <p class="mono">BE</p>
+            <h3 class="d">Osmania University</h3>
+            <p>Bachelor of Engineering, Mechanical</p>
+          </div>
+          <a class="card" href="https://doi.org/10.1109/ICCD59681.2023.10420779" target="_blank" rel="noopener" data-fade>
+            <p class="mono">IEEE · ICCD 2023</p>
+            <h3 class="d">Neural Network-Based Synthesis for Digital Sound Processing</h3>
+            <p>Intl. Conference on Cognitive Computing and Complex Data</p>
+            <span class="go">read it ↗</span>
+          </a>
+        </div>
+      </div>
+    </section>
 
-        var FS = [
-          'precision mediump float;',
-          'uniform vec2 uMouse;',              // in device pixels, gl coords (y up)
-          'uniform float uTime;',
-          'uniform float uPx;',                // glow radius in px
-          'varying float vDepth;',
-          'varying float vWorldZ;',
-          'void main(){',
-          '  float fog = (1.0 - vDepth);',
-          '  float alpha = 0.035 + 0.15 * fog * fog;',
-          '  vec3 col = vec3(0.91, 0.91, 0.90);',
-          '  float scanPos = mod(uTime * 0.55, 12.0);',      // sweeping lidar band in world z
-          '  float band = 1.0 - smoothstep(0.0, 0.9, abs(vWorldZ - scanPos));',
-          '  float md = distance(gl_FragCoord.xy, uMouse);',
-          '  float glow = 1.0 - smoothstep(0.0, uPx, md);',
-          '  float acc = clamp(band * 0.7 + glow, 0.0, 1.0);',
-          '  col = mix(col, vec3(1.0, 0.294, 0.0), acc);',   // #ff4b00
-          '  alpha = alpha + acc * 0.30 * fog;',
-          '  gl_FragColor = vec4(col * alpha, alpha);',      // premultiplied
-          '}'
-        ].join('\n');
+    <!-- ================= CONTACT ================= -->
+    <section class="contact" id="contact" data-shape="bust" data-x="0" data-y="0" data-scale="1.7" data-alpha="0.4">
+      <div class="lift">
+        <p class="hand ask" data-fade>so… got messy data?</p>
+        <h2 class="d" data-widen><span class="hot" data-split>Bug me</span> <span data-split>with it.</span></h2>
+        <svg class="brush hot" viewBox="0 0 400 22" preserveAspectRatio="none" aria-hidden="true"><path data-draw d="M4 12 C 110 3, 260 20, 396 9"/></svg>
+        <div data-fade>
+          <button class="mail" id="mail" type="button" data-mail="siddhirohanwork@gmail.com"><span class="copied" aria-live="polite">copied!</span>siddhirohanwork@gmail.com <span aria-hidden="true">⧉</span></button>
+          <p class="mono avail-line">Open to work · Data Science / Data Engineering / AI</p>
+        </div>
+      </div>
+      <div class="foot lift">
+        <div class="foot-links">
+          <a href="https://www.linkedin.com/in/siddhi-rohan/" target="_blank" rel="noopener">LinkedIn ↗</a>
+          <a href="https://github.com/SiddhiRohan" target="_blank" rel="noopener">GitHub ↗</a>
+          <a href="mailto:siddhirohanwork@gmail.com">Mail ↗</a>
+        </div>
+        <span class="mono">© 2026 Siddhi Rohan</span>
+        <button class="to-top" id="toTop" type="button">scroll to top ↑</button>
+      </div>
+    </section>
 
-        function compile(type, src) {
-          var s = gl.createShader(type);
-          gl.shaderSource(s, src);
-          gl.compileShader(s);
-          if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
-            return null;
-          }
-          return s;
-        }
-        var vs = compile(gl.VERTEX_SHADER, VS);
-        var fs = compile(gl.FRAGMENT_SHADER, FS);
-        if (!vs || !fs) return false;
-        var prog = gl.createProgram();
-        gl.attachShader(prog, vs);
-        gl.attachShader(prog, fs);
-        gl.linkProgram(prog);
-        if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return false;
-        gl.useProgram(prog);
+  </main>
 
-        // grid geometry as GL_LINES; density adapts to viewport aspect
-        var initAspect = canvas.offsetWidth / Math.max(1, canvas.offsetHeight);
-        var COLS = initAspect < 0.9 ? 70 : 130;
-        var ROWS = initAspect < 0.9 ? 60 : 78;
-        var verts = new Float32Array(COLS * ROWS * 2);
-        var k = 0, r, c;
-        for (r = 0; r < ROWS; r++) {
-          for (c = 0; c < COLS; c++) {
-            verts[k++] = (c / (COLS - 1)) * 2.0 - 1.0;
-            verts[k++] = r / (ROWS - 1);
-          }
-        }
-        var idx = [];
-        for (r = 0; r < ROWS; r++) {
-          for (c = 0; c < COLS - 1; c++) { idx.push(r * COLS + c, r * COLS + c + 1); }
-        }
-        for (c = 0; c < COLS; c++) {
-          for (r = 0; r < ROWS - 1; r++) { idx.push(r * COLS + c, (r + 1) * COLS + c); }
-        }
-        var indices = new Uint16Array(idx);
-
-        var vbo = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
-        gl.bufferData(gl.ARRAY_BUFFER, verts, gl.STATIC_DRAW);
-        var ibo = gl.createBuffer();
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
-
-        var aGrid = gl.getAttribLocation(prog, 'aGrid');
-        gl.enableVertexAttribArray(aGrid);
-        gl.vertexAttribPointer(aGrid, 2, gl.FLOAT, false, 0, 0);
-
-        var uTime = gl.getUniformLocation(prog, 'uTime');
-        var uAspect = gl.getUniformLocation(prog, 'uAspect');
-        var uMouse = gl.getUniformLocation(prog, 'uMouse');
-        var uPx = gl.getUniformLocation(prog, 'uPx');
-
-        gl.enable(gl.BLEND);
-        gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA); // premultiplied alpha
-        gl.clearColor(0, 0, 0, 0);
-
-        var dpr = 1, W = 0, H = 0;
-        function resizeGL() {
-          dpr = Math.min(window.devicePixelRatio || 1, 2);
-          W = canvas.offsetWidth;
-          H = canvas.offsetHeight;
-          canvas.width = Math.max(1, W * dpr);
-          canvas.height = Math.max(1, H * dpr);
-          gl.viewport(0, 0, canvas.width, canvas.height);
-        }
-        resizeGL();
-        window.addEventListener('resize', resizeGL);
-
-        var t0 = performance.now();
-        function frame() {
-          if (!running) return;
-          var t = (performance.now() - t0) / 1000;
-          gl.clear(gl.COLOR_BUFFER_BIT);
-          gl.uniform1f(uTime, t);
-          gl.uniform1f(uAspect, W / Math.max(1, H));
-          gl.uniform2f(uMouse, mouse.x * dpr, (H - mouse.y) * dpr);
-          gl.uniform1f(uPx, 150 * dpr);
-          gl.drawElements(gl.LINES, indices.length, gl.UNSIGNED_SHORT, 0);
-          requestAnimationFrame(frame);
-        }
-
-        if (reduced) {
-          // single static frame
-          running = true;
-          gl.clear(gl.COLOR_BUFFER_BIT);
-          gl.uniform1f(uTime, 4.0);
-          gl.uniform1f(uAspect, W / Math.max(1, H));
-          gl.uniform2f(uMouse, -9999, -9999);
-          gl.uniform1f(uPx, 150);
-          gl.drawElements(gl.LINES, indices.length, gl.UNSIGNED_SHORT, 0);
-          running = false;
-        } else {
-          frame();
-        }
-
-        document.addEventListener('visibilitychange', function () {
-          var was = running;
-          running = !document.hidden && !reduced;
-          if (running && !was) requestAnimationFrame(frame);
-        });
-
-        window.__bgMode = 'webgl';
-        return true;
-      }
-
-      function initField2D() {
-        var ctx = canvas.getContext('2d');
-        var W = 0, H = 0, dpr = 1;
-        var pts = [];
-        var GAP = 56;
-        function buildField() {
-          pts = [];
-          for (var y = GAP / 2; y < H + GAP; y += GAP) {
-            for (var x = GAP / 2; x < W + GAP; x += GAP) {
-              pts.push({ x: x, y: y, ox: x, oy: y });
-            }
-          }
-        }
-        function resizeField() {
-          dpr = Math.min(window.devicePixelRatio || 1, 2);
-          W = canvas.offsetWidth;
-          H = canvas.offsetHeight;
-          canvas.width = W * dpr;
-          canvas.height = H * dpr;
-          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-          buildField();
-          if (reduced) drawField();
-        }
-        function drawField() {
-          ctx.clearRect(0, 0, W, H);
-          var i, p, dx, dy, d, f;
-          for (i = 0; i < pts.length; i++) {
-            p = pts[i];
-            dx = mouse.x - p.ox; dy = mouse.y - p.oy;
-            d = Math.sqrt(dx * dx + dy * dy);
-            if (d < 200 && d > 0.001) {
-              f = (1 - d / 200) * 26;
-              p.x = p.ox - (dx / d) * f;
-              p.y = p.oy - (dy / d) * f;
-            } else {
-              p.x += (p.ox - p.x) * 0.08;
-              p.y += (p.oy - p.y) * 0.08;
-            }
-            var near = d < 200 ? (1 - d / 200) : 0;
-            var a = 0.10 + near * 0.55;
-            var rr = 1 + near * 1.4;
-            ctx.fillStyle = 'rgba(232,232,228,' + a.toFixed(3) + ')';
-            ctx.fillRect(p.x - rr / 2, p.y - rr / 2, rr, rr);
-          }
-        }
-        function loopField() {
-          if (!running) return;
-          drawField();
-          requestAnimationFrame(loopField);
-        }
-        resizeField();
-        window.addEventListener('resize', resizeField);
-        document.addEventListener('visibilitychange', function () {
-          var was = running;
-          running = !document.hidden && !reduced;
-          if (running && !was) requestAnimationFrame(loopField);
-        });
-        if (running) loopField(); else drawField();
-        window.__bgMode = '2d';
-      }
-
-      try {
-        if (!initWebGLTerrain()) initField2D();
-      } catch (e) {
-        initField2D();
-      }
-
-      /* ============ CROSSHAIR CURSOR + COORDS ============ */
-      if (window.matchMedia('(pointer: fine)').matches && !reduced) {
-        var xhX = document.getElementById('xhX');
-        var xhY = document.getElementById('xhY');
-        var xhTag = document.getElementById('xhTag');
-        window.addEventListener('pointermove', function (e) {
-          xhX.style.top = e.clientY + 'px';
-          xhY.style.left = e.clientX + 'px';
-          xhTag.style.left = e.clientX + 'px';
-          xhTag.style.top = e.clientY + 'px';
-          xhTag.textContent = 'X' + String(Math.round(e.clientX)).padStart(4, '0') + ' Y' + String(Math.round(e.clientY)).padStart(4, '0');
-        });
-      }
-
-      /* ============ SCRAMBLE HOVER ============ */
-      var CHARS = '!<>-_\\/[]{}=+*^?#';
-      document.querySelectorAll('[data-scramble]').forEach(function (el) {
-        var original = el.textContent;
-        var frame = null;
-        el.addEventListener('pointerenter', function () {
-          if (reduced) return;
-          var i = 0;
-          cancelAnimationFrame(frame);
-          (function step() {
-            var out = '';
-            for (var j = 0; j < original.length; j++) {
-              if (j < i / 2) out += original[j];
-              else out += CHARS[Math.floor(Math.random() * CHARS.length)];
-            }
-            el.textContent = out;
-            i++;
-            if (i / 2 <= original.length) frame = requestAnimationFrame(step);
-            else el.textContent = original;
-          })();
-        });
-        el.addEventListener('pointerleave', function () {
-          cancelAnimationFrame(frame);
-          el.textContent = original;
-        });
-      });
-
-      /* ============ REVEAL ON SCROLL ============ */
-      var rvs = document.querySelectorAll('.rv');
-      if ('IntersectionObserver' in window && !reduced) {
-        var io = new IntersectionObserver(function (entries) {
-          entries.forEach(function (en) {
-            if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
-          });
-        }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
-        rvs.forEach(function (el) { io.observe(el); });
-      } else {
-        rvs.forEach(function (el) { el.classList.add('in'); });
-      }
-    })();
-  </script>
-
-  <!-- ============ 3D TOTEMS (generated meshes, drawn as x-ray wireframes) ============ -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
   <script type="importmap">
-    { "imports": {
-      "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js",
-      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
-    } }
+    { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js" } }
   </script>
-  <script type="module">
-    import * as THREE from 'three';
-    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const finePointer = window.matchMedia('(pointer: fine)').matches;
-    const loader = new GLTFLoader();
-    const cache = {};
-
-    const VERT = `
-      uniform float uSize;
-      varying float vY;
-      varying float vZ;
-      void main(){
-        vY = position.y;
-        vec4 mv = modelViewMatrix * vec4(position, 1.0);
-        vZ = -mv.z;
-        gl_Position = projectionMatrix * mv;
-        gl_PointSize = uSize;
-      }`;
-    const FRAG = `
-      precision mediump float;
-      uniform float uScan;
-      uniform float uAlpha;
-      varying float vY;
-      varying float vZ;
-      void main(){
-        float band = 1.0 - smoothstep(0.0, 0.16, abs(vY - uScan));
-        float depth = 1.0 - 0.88 * smoothstep(2.5, 4.3, vZ);   // far side fades out
-        vec3 col = mix(vec3(0.91, 0.91, 0.89), vec3(1.0, 0.294, 0.0), band);
-        gl_FragColor = vec4(col, (uAlpha + band * 0.75) * depth);
-      }`;
-
-    function material(alpha, size) {
-      return new THREE.ShaderMaterial({
-        transparent: true,
-        depthTest: false,
-        depthWrite: false,
-        uniforms: { uScan: { value: 9 }, uAlpha: { value: alpha }, uSize: { value: size } },
-        vertexShader: VERT,
-        fragmentShader: FRAG
-      });
-    }
-
-    // normalise any GLB into a unit-radius group of feature edges + vertices
-    function build(gltf, alpha) {
-      const geos = [];
-      gltf.scene.updateMatrixWorld(true);
-      gltf.scene.traverse(function (o) {
-        if (o.isMesh) geos.push(o.geometry.clone().applyMatrix4(o.matrixWorld));
-      });
-      const box = new THREE.Box3();
-      geos.forEach(function (g) { g.computeBoundingBox(); box.union(g.boundingBox); });
-      const c = box.getCenter(new THREE.Vector3());
-      const d = box.getSize(new THREE.Vector3());
-      const s = 2 / Math.max(d.x, d.y, d.z);
-      const group = new THREE.Group();
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const lines = material(alpha, 1);
-      const points = material(alpha * 1.6, 1.6 * dpr);
-      let tris = 0;
-      geos.forEach(function (g) {
-        g.translate(-c.x, -c.y, -c.z).scale(s, s, s);
-        tris += (g.index ? g.index.count : g.attributes.position.count) / 3;
-        group.add(new THREE.LineSegments(new THREE.EdgesGeometry(g, 10), lines));
-        group.add(new THREE.Points(g, points));
-      });
-      group.userData = { tris: Math.round(tris), mats: [lines, points] };
-      return group;
-    }
-
-    function load(name, alpha) {
-      if (!cache[name]) {
-        cache[name] = new Promise(function (resolve, reject) {
-          loader.load('assets/models/' + name + '.glb', function (g) { resolve(build(g, alpha)); }, undefined, reject);
-        });
-      }
-      return cache[name];
-    }
-
-    function Stage(canvas) {
-      const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true, powerPreference: 'low-power' });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(36, 1, 0.1, 20);
-      camera.position.z = 3.4;
-      const self = this;
-      this.group = null;
-      this.active = false;
-      this.yaw = 0; this.pitch = 0;       // pointer-driven targets
-      let ry = 0.6, rx = 0, t0 = performance.now();
-
-      this.resize = function () {
-        const w = canvas.clientWidth, h = canvas.clientHeight;
-        if (!w || !h) return;
-        renderer.setSize(w, h, false);
-        camera.aspect = w / h;
-        camera.updateProjectionMatrix();
-      };
-      this.set = function (group) {
-        if (self.group) scene.remove(self.group);
-        self.group = group;
-        scene.add(group);
-      };
-      this.draw = function () {
-        const t = (performance.now() - t0) / 1000;
-        if (self.group) {
-          ry += ((t * 0.28 + self.yaw) - ry) * 0.06;
-          rx += (self.pitch - rx) * 0.06;
-          self.group.rotation.set(rx, reduced ? 0.6 : ry, 0);
-          const scan = reduced ? 9 : ((t * 0.42) % 3.2) - 1.3;   // sweeps bottom to top, then rests
-          self.group.userData.mats.forEach(function (m) { m.uniforms.uScan.value = scan; });
-        }
-        renderer.render(scene, camera);
-      };
-      function loop() {
-        if (!self.active) return;
-        self.draw();
-        requestAnimationFrame(loop);
-      }
-      this.start = function () {
-        if (reduced) { self.draw(); return; }
-        if (self.active) return;
-        self.active = true;
-        requestAnimationFrame(loop);
-      };
-      this.stop = function () { self.active = false; };
-      this.resize();
-      window.addEventListener('resize', function () { self.resize(); if (reduced) self.draw(); });
-    }
-
-    /* ---- hero centrepiece ---- */
-    (function () {
-      const canvas = document.getElementById('totem');
-      const tag = document.getElementById('totemTag');
-      const hero = canvas.parentElement;
-      let stage;
-      try { stage = new Stage(canvas); } catch (e) { return; }
-      load('bust', 0.2).then(function (group) {
-        stage.set(group);
-        canvas.classList.add('on');
-        tag.innerHTML = 'OBJ_000 <b>/</b> Bust.glb <b>/</b> ' + group.userData.tris.toLocaleString('en-US') + ' tris <b>/</b> Generated mesh';
-        tag.classList.add('on');
-        let visible = true;
-        function sync() { if (visible && !document.hidden) stage.start(); else stage.stop(); }
-        if ('IntersectionObserver' in window) {
-          new IntersectionObserver(function (en) { visible = en[0].isIntersecting; sync(); }).observe(hero);
-        }
-        document.addEventListener('visibilitychange', sync);
-        sync();
-      }).catch(function () {});
-      hero.addEventListener('pointermove', function (e) {
-        stage.yaw = (e.clientX / window.innerWidth - 0.5) * 0.9;
-        stage.pitch = (e.clientY / window.innerHeight - 0.5) * 0.35;
-      });
-    })();
-
-    /* ---- project object preview on work rows ---- */
-    (function () {
-      if (!finePointer) return;
-      const peek = document.getElementById('peek');
-      const nameEl = document.getElementById('peekName');
-      const statEl = document.getElementById('peekStat');
-      let stage = null, current = null;
-      const SIZE = 280, OFF = 28;
-
-      function place(e) {
-        let x = e.clientX + OFF, y = e.clientY - SIZE / 2;
-        if (x + SIZE > window.innerWidth - 12) x = e.clientX - OFF - SIZE;
-        y = Math.max(56, Math.min(window.innerHeight - SIZE - 56, y));
-        peek.style.transform = 'translate(' + x + 'px,' + y + 'px)';
-      }
-
-      document.querySelectorAll('.work-row[data-totem]').forEach(function (row, i) {
-        const name = row.dataset.totem;
-        row.addEventListener('pointerenter', function (e) {
-          current = name;
-          place(e);
-          if (!stage) {
-            try { stage = new Stage(document.getElementById('peekCanvas')); } catch (err) { return; }
-          }
-          load(name, 0.34).then(function (group) {
-            if (current !== name) return;
-            group.scale.setScalar(0.78);   // leave room for the panel labels
-            stage.set(group);
-            stage.resize();
-            nameEl.textContent = 'OBJ_00' + (i + 1) + ' / ' + name + '.glb';
-            statEl.textContent = group.userData.tris.toLocaleString('en-US') + ' tris';
-            peek.classList.add('on');
-            stage.start();
-          }).catch(function () {});
-        });
-        row.addEventListener('pointermove', place);
-        row.addEventListener('pointerleave', function () {
-          current = null;
-          peek.classList.remove('on');
-          if (stage) stage.stop();
-        });
-      });
-
-      // warm the cache once the page is idle so the first hover is instant
-      const warm = function () {
-        document.querySelectorAll('.work-row[data-totem]').forEach(function (r) { load(r.dataset.totem, 0.34).catch(function () {}); });
-      };
-      if ('requestIdleCallback' in window) requestIdleCallback(warm, { timeout: 4000 }); else setTimeout(warm, 2500);
-    })();
-  </script>
+  <script type="module" src="assets/js/main.js"></script>
 </body>
 </html>
