@@ -187,6 +187,75 @@
     }
     .hero-inner { position: relative; z-index: 2; }
 
+    /* 3D totem (three.js, generated mesh drawn as x-ray wireframe) */
+    #totem {
+      position: absolute;
+      right: 1vw;
+      top: 50%;
+      width: min(54vw, 88vh);
+      height: min(54vw, 88vh);
+      transform: translateY(-50%);
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 1.4s ease .6s;
+    }
+    #totem.on { opacity: 1; }
+    .totem-tag {
+      position: absolute;
+      right: var(--pad);
+      bottom: calc(var(--hud) + 6px);
+      z-index: 2;
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--faint);
+      opacity: 0;
+      transition: opacity .8s ease 1.2s;
+    }
+    .totem-tag.on { opacity: 1; }
+    .totem-tag b { color: var(--sig); font-weight: 400; }
+
+    /* project object preview, follows cursor over work rows */
+    .peek {
+      position: fixed;
+      left: 0; top: 0;
+      width: 280px;
+      height: 280px;
+      z-index: 450;
+      pointer-events: none;
+      background: var(--blk);
+      border: 1px solid rgba(232,232,228,0.35);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .18s ease, visibility .18s;
+      will-change: transform;
+    }
+    .peek.on { opacity: 1; visibility: visible; }
+    .peek canvas { width: 100%; height: 100%; display: block; }
+    .peek-bar {
+      position: absolute;
+      left: 10px; right: 10px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--dim);
+    }
+    .peek-bar.t { top: 8px; }
+    .peek-bar.b { bottom: 8px; color: var(--faint); }
+    .peek-bar .sig { color: var(--sig); }
+    .peek::before, .peek::after {
+      content: '';
+      position: absolute;
+      width: 9px; height: 9px;
+      border: 1px solid var(--sig);
+    }
+    .peek::before { left: -1px; top: -1px; border-right: 0; border-bottom: 0; }
+    .peek::after { right: -1px; bottom: -1px; border-left: 0; border-top: 0; }
+    @media not (pointer: fine) { .peek { display: none; } }
+
     .hero-pre {
       display: flex;
       justify-content: space-between;
@@ -609,6 +678,9 @@
       .hud-bl { display: none; }
       .hero-sub { flex-direction: column; }
       .footer { min-height: 70svh; }
+      #totem { right: -30vw; width: 105vw; height: 105vw; top: 36%; }
+      #totem.on { opacity: .34; }
+      .totem-tag { display: none; }
     }
     @media (max-width: 560px) {
       .hud-tr a:not(:last-child) { display: none; }
@@ -623,6 +695,7 @@
       .hero-sub { opacity: 1; }
       .rv { opacity: 1; transform: none; }
       .loader { display: none; }
+      #totem, .totem-tag { opacity: 1; }
     }
   </style>
 </head>
@@ -632,7 +705,7 @@
   <div class="loader" id="loader" aria-hidden="true">
     <div class="loader-top">
       <span>Please stand by<span class="blink">_</span></span>
-      <span>Siddhi Rohan / Portfolio v4</span>
+      <span>Siddhi Rohan / Portfolio v5</span>
     </div>
     <div class="loader-bottom">
       <span class="loader-top" style="align-self:flex-end">Loading system</span>
@@ -647,6 +720,13 @@
   <div class="xh-x" id="xhX" aria-hidden="true"></div>
   <div class="xh-y" id="xhY" aria-hidden="true"></div>
   <div class="xh-tag" id="xhTag" aria-hidden="true"></div>
+
+  <!-- ============ PROJECT OBJECT PREVIEW ============ -->
+  <div class="peek" id="peek" aria-hidden="true">
+    <canvas id="peekCanvas"></canvas>
+    <div class="peek-bar t"><span id="peekName">OBJ</span><span class="sig">&#9670; Live</span></div>
+    <div class="peek-bar b"><span id="peekStat"></span><span>Scan</span></div>
+  </div>
 
   <!-- ============ HUD ============ -->
   <div class="hud">
@@ -672,6 +752,8 @@
   <!-- ============ HERO ============ -->
   <header class="hero" id="top">
     <canvas id="field" aria-hidden="true"></canvas>
+    <canvas id="totem" aria-hidden="true"></canvas>
+    <span class="totem-tag" id="totemTag" aria-hidden="true"></span>
     <div class="hero-inner">
       <div class="hero-pre">
         <span>Data Scientist <span class="sig">/</span> Data Engineer</span>
@@ -752,7 +834,7 @@
       </div>
       <div class="work-list rv">
 
-        <a class="work-row" href="https://github.com/SiddhiRohan/arbiter" target="_blank" rel="noopener">
+        <a class="work-row" data-totem="scales" href="https://github.com/SiddhiRohan/arbiter" target="_blank" rel="noopener">
           <span class="no">/001</span>
           <h3>Arbiter</h3>
           <span class="work-meta">
@@ -763,7 +845,7 @@
           <span class="work-desc">Bidirectional AI governance middleware for LLM applications. Enforces role-based access control before the model sees a query, detects inference-channel and cross-query accumulation attacks, and scans outputs for policy violations in FERPA/HIPAA contexts.</span>
         </a>
 
-        <a class="work-row" href="https://github.com/SiddhiRohan/morpheus" target="_blank" rel="noopener">
+        <a class="work-row" data-totem="brain" href="https://github.com/SiddhiRohan/morpheus" target="_blank" rel="noopener">
           <span class="no">/002</span>
           <h3>Morpheus</h3>
           <span class="work-meta">
@@ -774,7 +856,7 @@
           <span class="work-desc">A local LLM (Qwen 2.5-3B) that fine-tunes its own LoRA adapters in real time during conversation, using Claude Sonnet as an automated critic to generate training signal, running concurrent inference and training on a single consumer GPU with under 2GB VRAM overhead.</span>
         </a>
 
-        <a class="work-row" href="https://github.com/SiddhiRohan/MedPal" target="_blank" rel="noopener">
+        <a class="work-row" data-totem="heart" href="https://github.com/SiddhiRohan/MedPal" target="_blank" rel="noopener">
           <span class="no">/003</span>
           <h3>MedPal</h3>
           <span class="work-meta">
@@ -785,7 +867,7 @@
           <span class="work-desc">AI-powered wellness companion with adaptive study planning, PDF summarization, flashcard generation, and real-time burnout detection using sentiment analysis.</span>
         </a>
 
-        <a class="work-row" href="https://github.com/SiddhiRohan/MealBridge" target="_blank" rel="noopener">
+        <a class="work-row" data-totem="bridge" href="https://github.com/SiddhiRohan/MealBridge" target="_blank" rel="noopener">
           <span class="no">/004</span>
           <h3>MealBridge</h3>
           <span class="work-meta">
@@ -796,7 +878,7 @@
           <span class="work-desc">Food redistribution platform connecting donors with NGOs through AI-powered matching, Google Maps route optimization, and automated volunteer coordination.</span>
         </a>
 
-        <a class="work-row" href="https://git.new/IhGAjSq" target="_blank" rel="noopener">
+        <a class="work-row" data-totem="coin" href="https://git.new/IhGAjSq" target="_blank" rel="noopener">
           <span class="no">/005</span>
           <h3>BTC Sentiment</h3>
           <span class="work-meta">
@@ -888,7 +970,7 @@
         </div>
         <div class="edu-cell">
           <h3>Osmania University</h3>
-          <p class="sub">Bachelor of Engineering, Mechanical<br>2019 / 2023</p>
+          <p class="sub">Bachelor of Engineering, Mechanical</p>
         </div>
       </div>
       <a class="pub-row rv" href="https://doi.org/10.1109/ICCD59681.2023.10420779" target="_blank" rel="noopener">
@@ -1286,6 +1368,221 @@
       } else {
         rvs.forEach(function (el) { el.classList.add('in'); });
       }
+    })();
+  </script>
+
+  <!-- ============ 3D TOTEMS (generated meshes, drawn as x-ray wireframes) ============ -->
+  <script type="importmap">
+    { "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+    } }
+  </script>
+  <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const finePointer = window.matchMedia('(pointer: fine)').matches;
+    const loader = new GLTFLoader();
+    const cache = {};
+
+    const VERT = `
+      uniform float uSize;
+      varying float vY;
+      varying float vZ;
+      void main(){
+        vY = position.y;
+        vec4 mv = modelViewMatrix * vec4(position, 1.0);
+        vZ = -mv.z;
+        gl_Position = projectionMatrix * mv;
+        gl_PointSize = uSize;
+      }`;
+    const FRAG = `
+      precision mediump float;
+      uniform float uScan;
+      uniform float uAlpha;
+      varying float vY;
+      varying float vZ;
+      void main(){
+        float band = 1.0 - smoothstep(0.0, 0.16, abs(vY - uScan));
+        float depth = 1.0 - 0.88 * smoothstep(2.5, 4.3, vZ);   // far side fades out
+        vec3 col = mix(vec3(0.91, 0.91, 0.89), vec3(1.0, 0.294, 0.0), band);
+        gl_FragColor = vec4(col, (uAlpha + band * 0.75) * depth);
+      }`;
+
+    function material(alpha, size) {
+      return new THREE.ShaderMaterial({
+        transparent: true,
+        depthTest: false,
+        depthWrite: false,
+        uniforms: { uScan: { value: 9 }, uAlpha: { value: alpha }, uSize: { value: size } },
+        vertexShader: VERT,
+        fragmentShader: FRAG
+      });
+    }
+
+    // normalise any GLB into a unit-radius group of feature edges + vertices
+    function build(gltf, alpha) {
+      const geos = [];
+      gltf.scene.updateMatrixWorld(true);
+      gltf.scene.traverse(function (o) {
+        if (o.isMesh) geos.push(o.geometry.clone().applyMatrix4(o.matrixWorld));
+      });
+      const box = new THREE.Box3();
+      geos.forEach(function (g) { g.computeBoundingBox(); box.union(g.boundingBox); });
+      const c = box.getCenter(new THREE.Vector3());
+      const d = box.getSize(new THREE.Vector3());
+      const s = 2 / Math.max(d.x, d.y, d.z);
+      const group = new THREE.Group();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const lines = material(alpha, 1);
+      const points = material(alpha * 1.6, 1.6 * dpr);
+      let tris = 0;
+      geos.forEach(function (g) {
+        g.translate(-c.x, -c.y, -c.z).scale(s, s, s);
+        tris += (g.index ? g.index.count : g.attributes.position.count) / 3;
+        group.add(new THREE.LineSegments(new THREE.EdgesGeometry(g, 10), lines));
+        group.add(new THREE.Points(g, points));
+      });
+      group.userData = { tris: Math.round(tris), mats: [lines, points] };
+      return group;
+    }
+
+    function load(name, alpha) {
+      if (!cache[name]) {
+        cache[name] = new Promise(function (resolve, reject) {
+          loader.load('assets/models/' + name + '.glb', function (g) { resolve(build(g, alpha)); }, undefined, reject);
+        });
+      }
+      return cache[name];
+    }
+
+    function Stage(canvas) {
+      const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true, powerPreference: 'low-power' });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(36, 1, 0.1, 20);
+      camera.position.z = 3.4;
+      const self = this;
+      this.group = null;
+      this.active = false;
+      this.yaw = 0; this.pitch = 0;       // pointer-driven targets
+      let ry = 0.6, rx = 0, t0 = performance.now();
+
+      this.resize = function () {
+        const w = canvas.clientWidth, h = canvas.clientHeight;
+        if (!w || !h) return;
+        renderer.setSize(w, h, false);
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+      };
+      this.set = function (group) {
+        if (self.group) scene.remove(self.group);
+        self.group = group;
+        scene.add(group);
+      };
+      this.draw = function () {
+        const t = (performance.now() - t0) / 1000;
+        if (self.group) {
+          ry += ((t * 0.28 + self.yaw) - ry) * 0.06;
+          rx += (self.pitch - rx) * 0.06;
+          self.group.rotation.set(rx, reduced ? 0.6 : ry, 0);
+          const scan = reduced ? 9 : ((t * 0.42) % 3.2) - 1.3;   // sweeps bottom to top, then rests
+          self.group.userData.mats.forEach(function (m) { m.uniforms.uScan.value = scan; });
+        }
+        renderer.render(scene, camera);
+      };
+      function loop() {
+        if (!self.active) return;
+        self.draw();
+        requestAnimationFrame(loop);
+      }
+      this.start = function () {
+        if (reduced) { self.draw(); return; }
+        if (self.active) return;
+        self.active = true;
+        requestAnimationFrame(loop);
+      };
+      this.stop = function () { self.active = false; };
+      this.resize();
+      window.addEventListener('resize', function () { self.resize(); if (reduced) self.draw(); });
+    }
+
+    /* ---- hero centrepiece ---- */
+    (function () {
+      const canvas = document.getElementById('totem');
+      const tag = document.getElementById('totemTag');
+      const hero = canvas.parentElement;
+      let stage;
+      try { stage = new Stage(canvas); } catch (e) { return; }
+      load('bust', 0.2).then(function (group) {
+        stage.set(group);
+        canvas.classList.add('on');
+        tag.innerHTML = 'OBJ_000 <b>/</b> Bust.glb <b>/</b> ' + group.userData.tris.toLocaleString('en-US') + ' tris <b>/</b> Generated mesh';
+        tag.classList.add('on');
+        let visible = true;
+        function sync() { if (visible && !document.hidden) stage.start(); else stage.stop(); }
+        if ('IntersectionObserver' in window) {
+          new IntersectionObserver(function (en) { visible = en[0].isIntersecting; sync(); }).observe(hero);
+        }
+        document.addEventListener('visibilitychange', sync);
+        sync();
+      }).catch(function () {});
+      hero.addEventListener('pointermove', function (e) {
+        stage.yaw = (e.clientX / window.innerWidth - 0.5) * 0.9;
+        stage.pitch = (e.clientY / window.innerHeight - 0.5) * 0.35;
+      });
+    })();
+
+    /* ---- project object preview on work rows ---- */
+    (function () {
+      if (!finePointer) return;
+      const peek = document.getElementById('peek');
+      const nameEl = document.getElementById('peekName');
+      const statEl = document.getElementById('peekStat');
+      let stage = null, current = null;
+      const SIZE = 280, OFF = 28;
+
+      function place(e) {
+        let x = e.clientX + OFF, y = e.clientY - SIZE / 2;
+        if (x + SIZE > window.innerWidth - 12) x = e.clientX - OFF - SIZE;
+        y = Math.max(56, Math.min(window.innerHeight - SIZE - 56, y));
+        peek.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+      }
+
+      document.querySelectorAll('.work-row[data-totem]').forEach(function (row, i) {
+        const name = row.dataset.totem;
+        row.addEventListener('pointerenter', function (e) {
+          current = name;
+          place(e);
+          if (!stage) {
+            try { stage = new Stage(document.getElementById('peekCanvas')); } catch (err) { return; }
+          }
+          load(name, 0.34).then(function (group) {
+            if (current !== name) return;
+            group.scale.setScalar(0.78);   // leave room for the panel labels
+            stage.set(group);
+            stage.resize();
+            nameEl.textContent = 'OBJ_00' + (i + 1) + ' / ' + name + '.glb';
+            statEl.textContent = group.userData.tris.toLocaleString('en-US') + ' tris';
+            peek.classList.add('on');
+            stage.start();
+          }).catch(function () {});
+        });
+        row.addEventListener('pointermove', place);
+        row.addEventListener('pointerleave', function () {
+          current = null;
+          peek.classList.remove('on');
+          if (stage) stage.stop();
+        });
+      });
+
+      // warm the cache once the page is idle so the first hover is instant
+      const warm = function () {
+        document.querySelectorAll('.work-row[data-totem]').forEach(function (r) { load(r.dataset.totem, 0.34).catch(function () {}); });
+      };
+      if ('requestIdleCallback' in window) requestIdleCallback(warm, { timeout: 4000 }); else setTimeout(warm, 2500);
     })();
   </script>
 </body>
