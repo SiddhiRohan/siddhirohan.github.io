@@ -114,7 +114,7 @@ async function initField() {
         vec2 c = gl_PointCoord - 0.5;
         float a = smoothstep(0.5, 0.12, length(c));
         float band = 1.0 - smoothstep(0.0, 0.2, abs(vY - uScan));
-        vec3 col = mix(vec3(0.91, 0.89, 0.84), vec3(1.0, 0.294, 0.0), max(vHot, band));
+        vec3 col = mix(vec3(0.86, 0.90, 0.92), vec3(0.784, 1.0, 0.18), max(vHot, band));   // ice white, acid hot points
         gl_FragColor = vec4(col, a * uAlpha * vFade * (0.5 + band * 0.5));
       }`
   });
