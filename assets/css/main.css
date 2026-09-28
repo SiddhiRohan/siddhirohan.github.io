@@ -480,12 +480,17 @@ section { position: relative; padding: 0 var(--pad); }
   background: repeating-linear-gradient(-45deg, var(--hot) 0 12px, transparent 12px 24px);
   opacity: 0.85;
 }
-.build-name { display: flex; align-items: center; gap: 0.32em; }
-.bt-mark { width: 0.86em; height: 0.86em; flex: none; overflow: visible; }
-.bt-mark .a { fill: var(--bone); transition: transform .45s var(--ease); }
-.bt-mark .b { fill: var(--hot); transition: transform .45s var(--ease); }
-.build:hover .bt-mark .a { transform: translate(-2px, -2px); }
-.build:hover .bt-mark .b { transform: translate(2px, 2px); }
+/* BuildTurn's logo shown as designed: navy on white, so it gets its own plate */
+.build-logo {
+  align-self: flex-start;
+  background: #fff;
+  padding: 14px 20px;
+  transform: rotate(-1.2deg);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45);
+  transition: transform .45s var(--ease);
+}
+.build:hover .build-logo { transform: rotate(0); }
+.build-logo img { display: block; height: clamp(30px, 3vw, 42px); width: auto; }
 .build-status { display: flex; align-items: center; gap: 9px; color: var(--hot); }
 .build-status i { width: 7px; height: 7px; border-radius: 50%; background: var(--hot); animation: pulse 1.6s ease-in-out infinite; }
 .build h3 { font-size: clamp(2rem, 3.6vw, 3.4rem); --wdth: 70; font-weight: 800; line-height: 0.92; }
