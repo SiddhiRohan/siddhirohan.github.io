@@ -455,9 +455,11 @@ section { position: relative; padding: 0 var(--pad); }
 
 /* ---------- NOW BUILDING ---------- */
 .now { padding-top: 18vh; padding-bottom: 6vh; }
+.now-head { min-height: 100svh; padding-bottom: 0; }   /* lower half is left empty: the particle wordmark forms there */
+.now-cards { padding-top: 0; }
 .now .l2 { padding-left: 6vw; }
 .now .brush { width: min(36vw, 480px); margin: 1.2vw 0 0 6vw; }
-.now-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.4vw; margin-top: 9vh; max-width: min(66vw, 1180px); }
+.now-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.4vw; max-width: 1180px; }
 .build {
   position: relative;
   border: 1px dashed var(--bone-faint);

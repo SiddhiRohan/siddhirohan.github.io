@@ -15,7 +15,8 @@ if (gsap && ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
    Every transition passes through chaos: mess in, structure out.
    ========================================================= */
 const N = 12000;
-const BAKED = ['bust', 'scales', 'brain', 'heart', 'bridge', 'coin'];
+const BAKED = ['bust', 'scales', 'brain', 'heart', 'bridge', 'coin', 'buildturn'];
+const tints = {};   // per-point accent tint, e.g. BuildTurn's blue piece rendered acid
 const field = { ready: false, intro: { v: reduced ? 0 : 1 } };
 
 function proceduralShapes() {
@@ -35,50 +36,7 @@ function proceduralShapes() {
     grid[i * 3 + 1] = y * 0.95;
     grid[i * 3 + 2] = Math.sin(x * 3.2) * Math.cos(y * 2.6) * 0.16;
   }
-  return { chaos, grid, buildturn: markShape(rnd).pts };
-}
-
-/* BuildTurn mark, from the logo's SVG paths (viewBox 4..36), extruded.
-   Piece A: M6 24V6h22v8H14v10Z   Piece B: M34 16v18H12v-8h14V16Z */
-const MARK = [
-  { rects: [[6, 6, 28, 14], [6, 14, 14, 24]], poly: [[6, 24], [6, 6], [28, 6], [28, 14], [14, 14], [14, 24]] },
-  { rects: [[12, 26, 34, 34], [26, 16, 34, 26]], poly: [[34, 16], [34, 34], [12, 34], [12, 26], [26, 26], [26, 16]] }
-];
-let markTint = null;
-function markShape(rnd) {
-  const pts = new Float32Array(N * 3), tint = new Float32Array(N);
-  const D = 3.2;                                   // extrusion depth, in logo units
-  const u = (x) => (x - 20) / 14, v = (y) => (20 - y) / 14, w = (z) => z / 14;
-  const list = [];
-  MARK.forEach((piece, pi) => {
-    const faceA = piece.rects.reduce((s, r) => s + (r[2] - r[0]) * (r[3] - r[1]), 0);
-    const edges = piece.poly.map((p, k) => [p, piece.poly[(k + 1) % piece.poly.length]]);
-    const perim = edges.reduce((s, [a, b]) => s + Math.hypot(b[0] - a[0], b[1] - a[1]), 0);
-    const n = N / 2;
-    for (let i = 0; i < n; i++) {
-      const r = rnd();
-      let x, y, z;
-      if (r < 0.46) {                              // front + back faces
-        let t = rnd() * faceA, rc = piece.rects[0];
-        for (const q of piece.rects) { const a = (q[2] - q[0]) * (q[3] - q[1]); if (t < a) { rc = q; break; } t -= a; }
-        x = rc[0] + rnd() * (rc[2] - rc[0]); y = rc[1] + rnd() * (rc[3] - rc[1]);
-        z = (rnd() < 0.5 ? -1 : 1) * D / 2;
-      } else {                                     // side walls, and hard outlines so it reads crisply
-        let t = rnd() * perim, e = edges[0];
-        for (const q of edges) { const l = Math.hypot(q[1][0] - q[0][0], q[1][1] - q[0][1]); if (t < l) { e = q; break; } t -= l; }
-        const k = rnd();
-        x = e[0][0] + (e[1][0] - e[0][0]) * k; y = e[0][1] + (e[1][1] - e[0][1]) * k;
-        z = r < 0.8 ? (rnd() - 0.5) * D : (rnd() < 0.5 ? -1 : 1) * D / 2;
-      }
-      list.push([u(x), v(y), w(z), pi]);
-    }
-  });
-  // same height ordering as the baked meshes, so morphs sweep coherently
-  list.forEach((p) => { p.push(p[1] + (rnd() - 0.5) * 0.16); });
-  list.sort((a, b) => a[4] - b[4]);
-  list.forEach((p, i) => { pts[i * 3] = p[0]; pts[i * 3 + 1] = p[1]; pts[i * 3 + 2] = p[2]; tint[i] = p[3]; });
-  markTint = tint;
-  return { pts };
+  return { chaos, grid };
 }
 
 async function initField() {
@@ -100,6 +58,10 @@ async function initField() {
       for (let i = 0; i < N * 3; i++) a[i] = q[s * N * 3 + i] / 32767;
       shapes[name] = a;
     });
+    // after the shapes: one tint value per BuildTurn point (the logo's blue piece)
+    const t = new Float32Array(N), off = BAKED.length * N * 3;
+    for (let i = 0; i < N; i++) t[i] = q[off + i] / 32767;
+    tints.buildturn = t;
   } catch (e) { /* procedural shapes only */ }
 
   const scene = new THREE.Scene();
@@ -112,7 +74,6 @@ async function initField() {
   const aRnd = new THREE.BufferAttribute(new Float32Array(N * 4), 4);
   const aTintFrom = new THREE.BufferAttribute(new Float32Array(N), 1);
   const aTintTo = new THREE.BufferAttribute(new Float32Array(N), 1);
-  const tints = { buildturn: markTint };
   const noTint = new Float32Array(N);
   for (let i = 0; i < N; i++) {
     const u = Math.random() * 2 - 1, th = Math.random() * Math.PI * 2, r = Math.sqrt(1 - u * u);
@@ -196,7 +157,9 @@ async function initField() {
         shape: shapes[d.shape] ? d.shape : 'chaos',
         a: top + Math.min(h, vh) / 2,
         b: top + h - Math.min(h, vh) / 2,
-        x: +d.x || 0, y: +d.y || 0, s: +d.scale || 1,
+        x: +d.x || 0, y: +d.y || 0,
+        s: portrait && d.mscale !== undefined ? +d.mscale / 0.62 : (+d.scale || 1),   // mscale: absolute scale on phones
+        amp: d.spin !== undefined ? +d.spin : 0.75,                                    // how far an object sways
         al: portrait && d.malpha !== undefined ? +d.malpha : (d.alpha === undefined ? 1 : +d.alpha)   // malpha: quieter behind text on phones
       };
     });
@@ -255,7 +218,8 @@ async function initField() {
     // wide, flat shapes (grid/chaos) shouldn't tumble: damp spin by how "object-like" the stop is
     const flat = (s) => (s.shape === 'grid' ? 0 : s.shape === 'chaos' ? 0.35 : 1);
     const obj = lerp(flat(A), flat(B), m);
-    rig.rotation.set(mouse.rx + (1 - obj) * -0.5, Math.sin(spin) * 0.75 * obj + mouse.ry + (1 - obj) * 0.15, 0);
+    const amp = lerp(A.amp, B.amp, m);
+    rig.rotation.set(mouse.rx + (1 - obj) * -0.5, Math.sin(spin) * amp * obj + mouse.ry + (1 - obj) * 0.15, 0);
     rig.position.set(cur.x * halfW, cur.y * halfH, 0);
     rig.scale.setScalar(cur.s);
 
