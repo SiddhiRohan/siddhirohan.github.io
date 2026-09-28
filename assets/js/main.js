@@ -51,7 +51,7 @@ async function initField() {
 
   const shapes = proceduralShapes();
   try {
-    const buf = await (await fetch('assets/data/shapes.bin')).arrayBuffer();
+    const buf = await (await fetch('assets/data/shapes.bin?v=7')).arrayBuffer();
     const q = new Int16Array(buf);
     BAKED.forEach((name, s) => {
       const a = new Float32Array(N * 3);
