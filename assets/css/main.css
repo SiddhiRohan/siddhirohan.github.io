@@ -457,7 +457,7 @@ section { position: relative; padding: 0 var(--pad); }
 .now { padding-top: 18vh; padding-bottom: 6vh; }
 .now .l2 { padding-left: 6vw; }
 .now .brush { width: min(36vw, 480px); margin: 1.2vw 0 0 6vw; }
-.now-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.4vw; margin-top: 9vh; max-width: 1180px; }
+.now-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.4vw; margin-top: 9vh; max-width: min(66vw, 1180px); }
 .build {
   position: relative;
   border: 1px dashed var(--bone-faint);
@@ -480,21 +480,27 @@ section { position: relative; padding: 0 var(--pad); }
   background: repeating-linear-gradient(-45deg, var(--hot) 0 12px, transparent 12px 24px);
   opacity: 0.85;
 }
-/* BuildTurn's logo shown as designed: navy on white, so it gets its own plate */
-.build-logo {
-  align-self: flex-start;
-  background: #fff;
-  padding: 14px 20px;
-  transform: rotate(-1.2deg);
-  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45);
-  transition: transform .45s var(--ease);
+/* BuildTurn wordmark: the logo's own lockup (IBM Plex Sans 600, tight tracking), in site colours */
+.bt-word {
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+  font-family: 'IBM Plex Sans', var(--body);
+  font-weight: 600;
+  font-size: clamp(2.8rem, 4.8vw, 4.6rem);
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--bone);
 }
-.build:hover .build-logo { transform: rotate(0); }
-.build-logo img { display: block; height: clamp(30px, 3vw, 42px); width: auto; }
+.bt-mark { width: 0.82em; height: 0.82em; flex: none; overflow: visible; }
+.bt-mark .a { fill: var(--bone); transition: transform .45s var(--ease); }
+.bt-mark .b { fill: var(--hot); transition: transform .45s var(--ease); }
+.build:hover .bt-mark .a { transform: translate(-1.5px, -1.5px); }
+.build:hover .bt-mark .b { transform: translate(1.5px, 1.5px); }
 .build-status { display: flex; align-items: center; gap: 9px; color: var(--hot); }
 .build-status i { width: 7px; height: 7px; border-radius: 50%; background: var(--hot); animation: pulse 1.6s ease-in-out infinite; }
-.build h3 { font-size: clamp(2rem, 3.6vw, 3.4rem); --wdth: 70; font-weight: 800; line-height: 0.92; }
-.build p:not(.mono):not(.hand) { color: var(--bone-dim); font-size: 1.02rem; max-width: 44ch; }
+.build h3.d { font-size: clamp(2.6rem, 4.6vw, 4.4rem); --wdth: 70; font-weight: 800; line-height: 0.9; }
+.build p:not(.mono):not(.hand) { color: var(--bone-dim); font-size: 1.08rem; max-width: 44ch; }
 .build-note { margin-top: auto; padding-top: 8px; font-size: 1.7rem; color: var(--bone); transform: rotate(-3deg); transform-origin: left; }
 .now .btn { margin-top: 7vh; }
 
@@ -734,7 +740,7 @@ section { position: relative; padding: 0 var(--pad); }
   .job { grid-template-columns: 1fr; gap: 12px; }
   .paper-grid { grid-template-columns: 1fr; gap: 22px; }
   .card:nth-child(n) { transform: none; min-height: 0; }
-  .now-grid { grid-template-columns: 1fr; gap: 20px; }
+  .now-grid { grid-template-columns: 1fr; gap: 20px; max-width: none; }
   .build:nth-child(2) { transform: none; }
   .foot { position: static; margin-top: 10vh; width: 100%; flex-direction: column; align-items: center; }
   .big { font-size: 15vw; }

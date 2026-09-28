@@ -35,7 +35,50 @@ function proceduralShapes() {
     grid[i * 3 + 1] = y * 0.95;
     grid[i * 3 + 2] = Math.sin(x * 3.2) * Math.cos(y * 2.6) * 0.16;
   }
-  return { chaos, grid };
+  return { chaos, grid, buildturn: markShape(rnd).pts };
+}
+
+/* BuildTurn mark, from the logo's SVG paths (viewBox 4..36), extruded.
+   Piece A: M6 24V6h22v8H14v10Z   Piece B: M34 16v18H12v-8h14V16Z */
+const MARK = [
+  { rects: [[6, 6, 28, 14], [6, 14, 14, 24]], poly: [[6, 24], [6, 6], [28, 6], [28, 14], [14, 14], [14, 24]] },
+  { rects: [[12, 26, 34, 34], [26, 16, 34, 26]], poly: [[34, 16], [34, 34], [12, 34], [12, 26], [26, 26], [26, 16]] }
+];
+let markTint = null;
+function markShape(rnd) {
+  const pts = new Float32Array(N * 3), tint = new Float32Array(N);
+  const D = 3.2;                                   // extrusion depth, in logo units
+  const u = (x) => (x - 20) / 14, v = (y) => (20 - y) / 14, w = (z) => z / 14;
+  const list = [];
+  MARK.forEach((piece, pi) => {
+    const faceA = piece.rects.reduce((s, r) => s + (r[2] - r[0]) * (r[3] - r[1]), 0);
+    const edges = piece.poly.map((p, k) => [p, piece.poly[(k + 1) % piece.poly.length]]);
+    const perim = edges.reduce((s, [a, b]) => s + Math.hypot(b[0] - a[0], b[1] - a[1]), 0);
+    const n = N / 2;
+    for (let i = 0; i < n; i++) {
+      const r = rnd();
+      let x, y, z;
+      if (r < 0.46) {                              // front + back faces
+        let t = rnd() * faceA, rc = piece.rects[0];
+        for (const q of piece.rects) { const a = (q[2] - q[0]) * (q[3] - q[1]); if (t < a) { rc = q; break; } t -= a; }
+        x = rc[0] + rnd() * (rc[2] - rc[0]); y = rc[1] + rnd() * (rc[3] - rc[1]);
+        z = (rnd() < 0.5 ? -1 : 1) * D / 2;
+      } else {                                     // side walls, and hard outlines so it reads crisply
+        let t = rnd() * perim, e = edges[0];
+        for (const q of edges) { const l = Math.hypot(q[1][0] - q[0][0], q[1][1] - q[0][1]); if (t < l) { e = q; break; } t -= l; }
+        const k = rnd();
+        x = e[0][0] + (e[1][0] - e[0][0]) * k; y = e[0][1] + (e[1][1] - e[0][1]) * k;
+        z = r < 0.8 ? (rnd() - 0.5) * D : (rnd() < 0.5 ? -1 : 1) * D / 2;
+      }
+      list.push([u(x), v(y), w(z), pi]);
+    }
+  });
+  // same height ordering as the baked meshes, so morphs sweep coherently
+  list.forEach((p) => { p.push(p[1] + (rnd() - 0.5) * 0.16); });
+  list.sort((a, b) => a[4] - b[4]);
+  list.forEach((p, i) => { pts[i * 3] = p[0]; pts[i * 3 + 1] = p[1]; pts[i * 3 + 2] = p[2]; tint[i] = p[3]; });
+  markTint = tint;
+  return { pts };
 }
 
 async function initField() {
@@ -67,6 +110,10 @@ async function initField() {
   const aFrom = new THREE.BufferAttribute(new Float32Array(N * 3), 3);
   const aTo = new THREE.BufferAttribute(new Float32Array(N * 3), 3);
   const aRnd = new THREE.BufferAttribute(new Float32Array(N * 4), 4);
+  const aTintFrom = new THREE.BufferAttribute(new Float32Array(N), 1);
+  const aTintTo = new THREE.BufferAttribute(new Float32Array(N), 1);
+  const tints = { buildturn: markTint };
+  const noTint = new Float32Array(N);
   for (let i = 0; i < N; i++) {
     const u = Math.random() * 2 - 1, th = Math.random() * Math.PI * 2, r = Math.sqrt(1 - u * u);
     aRnd.setXYZW(i, r * Math.cos(th), u, r * Math.sin(th), Math.random());
@@ -75,6 +122,8 @@ async function initField() {
   geo.setAttribute('aFrom', aFrom);
   geo.setAttribute('aTo', aTo);
   geo.setAttribute('aRnd', aRnd);
+  geo.setAttribute('aTintFrom', aTintFrom);
+  geo.setAttribute('aTintTo', aTintTo);
   geo.boundingSphere = new THREE.Sphere(new THREE.Vector3(), 50);
 
   const mat = new THREE.ShaderMaterial({
@@ -88,6 +137,8 @@ async function initField() {
     },
     vertexShader: `
       attribute vec3 aFrom; attribute vec3 aTo; attribute vec4 aRnd;
+      attribute float aTintFrom; attribute float aTintTo;
+      varying float vTint;
       uniform float uT, uTime, uIntro, uSize;
       varying float vY; varying float vHot; varying float vFade;
       void main(){
@@ -101,6 +152,7 @@ async function initField() {
         p += 0.012 * vec3(sin(uTime * 0.9 + aRnd.w * 40.0), cos(uTime * 0.7 + aRnd.w * 31.0), sin(uTime * 0.8 + aRnd.w * 17.0));
         vY = p.y;
         vHot = step(0.93, aRnd.w);
+        vTint = mix(aTintFrom, aTintTo, e);
         vec4 mv = modelViewMatrix * vec4(p, 1.0);
         vFade = 1.0 - 0.75 * smoothstep(5.0, 8.2, -mv.z);
         gl_Position = projectionMatrix * mv;
@@ -109,12 +161,12 @@ async function initField() {
     fragmentShader: `
       precision mediump float;
       uniform float uAlpha, uScan;
-      varying float vY; varying float vHot; varying float vFade;
+      varying float vY; varying float vHot; varying float vFade; varying float vTint;
       void main(){
         vec2 c = gl_PointCoord - 0.5;
         float a = smoothstep(0.5, 0.12, length(c));
         float band = 1.0 - smoothstep(0.0, 0.2, abs(vY - uScan));
-        vec3 col = mix(vec3(0.86, 0.90, 0.92), vec3(0.784, 1.0, 0.18), max(vHot, band));   // ice white, acid hot points
+        vec3 col = mix(vec3(0.86, 0.90, 0.92), vec3(0.784, 1.0, 0.18), max(max(vHot, band), vTint));   // ice white, acid hot points; tinted shapes (BuildTurn's lower piece) go acid
         gl_FragColor = vec4(col, a * uAlpha * vFade * (0.5 + band * 0.5));
       }`
   });
@@ -144,7 +196,8 @@ async function initField() {
         shape: shapes[d.shape] ? d.shape : 'chaos',
         a: top + Math.min(h, vh) / 2,
         b: top + h - Math.min(h, vh) / 2,
-        x: +d.x || 0, y: +d.y || 0, s: +d.scale || 1, al: d.alpha === undefined ? 1 : +d.alpha
+        x: +d.x || 0, y: +d.y || 0, s: +d.scale || 1,
+        al: portrait && d.malpha !== undefined ? +d.malpha : (d.alpha === undefined ? 1 : +d.alpha)   // malpha: quieter behind text on phones
       };
     });
   }
@@ -154,8 +207,12 @@ async function initField() {
     seg = i;
     aFrom.array.set(shapes[stops[i].shape]);
     aTo.array.set(shapes[stops[Math.min(i + 1, stops.length - 1)].shape]);
+    aTintFrom.array.set(tints[stops[i].shape] || noTint);
+    aTintTo.array.set(tints[stops[Math.min(i + 1, stops.length - 1)].shape] || noTint);
     aFrom.needsUpdate = true;
     aTo.needsUpdate = true;
+    aTintFrom.needsUpdate = true;
+    aTintTo.needsUpdate = true;
   }
 
   const cur = { t: 0, x: 0, y: 0, s: 1, al: 0 };
