@@ -710,7 +710,8 @@ section { position: relative; padding: 0 var(--pad); }
   gap: 20px;
   color: var(--bone-dim);
 }
-.foot-links { display: flex; gap: 26px; }
+.foot-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 26px; }
+.foot-links a { white-space: nowrap; }
 .foot-links a, .to-top {
   font-family: var(--hand);
   font-size: clamp(1.3rem, 2vw, 1.8rem);
